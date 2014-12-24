@@ -27,6 +27,7 @@
 		pwms = <&pwm1 0 5000000>;
 		brightness-levels = <0 4 8 16 32 64 128 255>;
 		default-brightness-level = <7>;
+		enable-gpios = <&gpio7 12 0>; 
 	};
 
 	gpio-keys {
@@ -34,7 +35,7 @@
 		/* Reconfig to power key in Android*/
 		power {
 			label = "Power Button";
-			gpios = <&gpio2 27 1>;
+			gpios = <&gpio2 27 0>;
 			linux,code = <116>; /* KEY_POWER */
 			gpio-key,wakeup;
 		};
@@ -100,17 +101,6 @@
 			regulator-always-on;
 		};
 
-		reg_sd3_vmmc: sd3_vmmc{
-			compatible = "regulator-fixed";
-			regulator-name = "P3V3_SDa_SWITCHED";
-			regulator-min-microvolt = <3300000>;
-			regulator-max-microvolt = <3300000>;
-			gpio = <&gpio7 8 GPIO_ACTIVE_HIGH>;
-			enable-active-high;
-			/* remove below line to enable this regulator */
-			status="disabled";
-		};
-
 		reg_5v: 5v {
 			compatible = "regulator-fixed";
 			regulator-name = "5V";
@@ -127,16 +117,6 @@
 			regulator-min-microvolt = <5000000>;
 			regulator-max-microvolt = <5000000>;
 			gpio = <&gpio1 3 GPIO_ACTIVE_HIGH>;
-			enable-active-high;
-			regulator-boot-on;
-		};
-
-		reg_uart_sp213: uart_sp213 {
-			compatible = "regulator-fixed";
-			regulator-name = "uart-sp213";
-			regulator-min-microvolt = <5000000>;
-			regulator-max-microvolt = <5000000>;
-			gpio = <&gpio4 5 GPIO_ACTIVE_HIGH>;
 			enable-active-high;
 			regulator-boot-on;
 		};
@@ -230,12 +210,12 @@
 			regulator-boot-on;
 		};
 
-		reg_vled1_en: vled1_en {
+		reg_enet_pwr_en: enet_pwr_en {
 			compatible = "regulator-fixed";
-			regulator-name = "vled1-en";
+			regulator-name = "enet-pwr-en";
 			regulator-min-microvolt = <5000000>;
 			regulator-max-microvolt = <5000000>;
-			gpio = <&gpio7 12 GPIO_ACTIVE_HIGH>;
+			gpio = <&gpio1 27 GPIO_ACTIVE_HIGH>;
 			enable-active-high;
 			regulator-boot-on;
 		};
@@ -264,7 +244,7 @@
 			regulator-name = "usb_flgoc";
 			regulator-min-microvolt = <5000000>;
 			regulator-max-microvolt = <5000000>;
-			gpio = <&gpio4 15 GPIO_ACTIVE_HIGH>;
+			gpio = <&gpio5 7 GPIO_ACTIVE_HIGH>;
 			enable-active-high;
 			regulator-always-on;
 		};
@@ -277,12 +257,12 @@
 		cpu-dai = <&ssi2>;
 		audio-codec = <&codec>;
 		audio-routing =
-	        	"MIC1", "Mic Jack",
-	        	"MIC2",  "Line In Jack",
 		        "Headphone Jack", "HPOL",
 		        "Headphone Jack", "HPOR",
 		        "Ext Spk", "SPOR",
-  			"Ext Spk", "SPOL";
+		        "Ext Spk", "SPOL",
+		        "MIC1", "Mic Jack",
+		        "MIC2",  "Line In Jack";
 		mux-int-port = <2>;
 		mux-ext-port = <3>;
 	};
@@ -306,6 +286,68 @@
 		compatible = "fsl,mxc_v4l2_output";
 		status = "okay";
 	};
+
+	gpio_poweroff {
+		compatible = "gpio-poweroff";
+		gpios = <&gpio2 4 1>;
+	};
+	leds {
+		compatible = "gpio-leds";
+
+		sp213-en {
+			label = "SP213_PWR_EN";
+			gpios = <&gpio4 5 0>;
+			linux,default-trigger = "sp213-en";
+		};
+
+		cash-drawer-gpio1 {
+			label = "CASH_DRAWER_GPIO1";
+			gpios = <&gpio4 26 1>;
+			linux,default-trigger = "cash-drawer-gpio1";
+		};
+
+		cash-drawer-gpio2 {
+			label = "CASH_DRAWER_GPIO2";
+			gpios = <&gpio4 25 1>;
+			linux,default-trigger = "cash-drawer-gpio2";
+		};
+
+		stadnby-led {
+			label = "STANDBY_LED";
+			gpios = <&gpio4 14 1>;
+			linux,default-trigger = "standby-led";
+		};
+
+		power-led {
+			label = "POWER_LED";
+			gpios = <&gpio4 15 1>;
+			linux,default-trigger = "power-led";
+		};
+
+		update-led {
+			label = "UPDATE_LED";
+			gpios = <&gpio1 6 1>;
+			linux,default-trigger = "update-led";
+		};
+	};
+/*
+	gpio-switches {
+ 		compatible = "gpio-switch";
+
+ 		cash-sens {
+ 			label = "CASH_SENS";
+ 			gpios = <&gpio4 27 0>;
+		};
+ 	};
+*/
+	bt_rfkill {
+		compatible = "broadcom,bcm_bt_rfkill";
+		bt-power-gpios = <&gpio3 24 0>;
+		bt-wakeup-gpios = <&gpio3 23 0>;
+		bt-reset-gpios = <&gpio3 25 0>;
+		bt-host-wakeup-gpios = <&gpio3 30 0>;
+		status = "okay";
+	};
 };
 
 &audmux {
@@ -316,7 +358,7 @@
 
 &fec {
 	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_enet_1>;
+	pinctrl-0 = <&pinctrl_enet_4>;
 	phy-mode = "rgmii";
 	status = "okay";
 };
@@ -357,7 +399,7 @@
 	status = "okay";
 
 	codec: rt5631@1a {
-		compatible = "rt5631";
+		compatible = "realtek,rt5631";
 		reg = <0x1a>;
 		clock-frequency = <12000000>;
 	};
@@ -384,6 +426,11 @@
 	eeprom@50 {
 		compatible = "atmel,24c02";
 		reg = <0x50>;
+	};
+
+	rtc-pcf8563@51 {
+		compatible = "nxp,pcf8563";
+		reg = <0x51>;
 	};
 };
 
@@ -436,6 +483,46 @@
 				MX6QDL_PAD_CSI0_DAT12__GPIO5_IO30  0x80000000
 				MX6QDL_PAD_GPIO_17__GPIO7_IO12	   0x80000000
 				MX6QDL_PAD_GPIO_18__GPIO7_IO13	   0x80000000
+			>;
+		};
+	};
+
+	enet {
+		pinctrl_enet_4: enetgrp-4 {
+			fsl,pins = <
+				MX6QDL_PAD_ENET_CRS_DV__ENET_RX_EN    0x1b0b0
+				MX6QDL_PAD_ENET_MDC__ENET_MDC         0x1b0b0
+				MX6QDL_PAD_ENET_MDIO__ENET_MDIO       0x1b0b0
+				MX6QDL_PAD_ENET_REF_CLK__ENET_TX_CLK  0x1b0b0
+				MX6QDL_PAD_RGMII_TXC__RGMII_TXC       0x1b0b0
+				MX6QDL_PAD_RGMII_TD0__RGMII_TD0       0x1b0b0
+				MX6QDL_PAD_RGMII_TD1__RGMII_TD1       0x1b0b0
+				MX6QDL_PAD_RGMII_TD2__RGMII_TD2       0x1b0b0
+				MX6QDL_PAD_RGMII_TD3__RGMII_TD3       0x1b0b0
+				MX6QDL_PAD_RGMII_TX_CTL__RGMII_TX_CTL 0x1b0b0
+				MX6QDL_PAD_RGMII_RXC__RGMII_RXC       0x1b0b0
+				MX6QDL_PAD_RGMII_RD0__RGMII_RD0       0x1b0b0
+				MX6QDL_PAD_RGMII_RD1__RGMII_RD1       0x1b0b0
+				MX6QDL_PAD_RGMII_RD2__RGMII_RD2       0x1b0b0
+				MX6QDL_PAD_RGMII_RD3__RGMII_RD3       0x1b0b0
+				MX6QDL_PAD_RGMII_RX_CTL__RGMII_RX_CTL 0x1b0b0
+			>;
+		};
+	};
+	uart5 {
+		pinctrl_uart5_2: uart5grp-2 {
+			fsl,pins = <
+				MX6QDL_PAD_KEY_COL1__UART5_TX_DATA 0x1b0b1
+			>;
+		};
+	};
+	uart2 {
+		pinctrl_uart2_3: uart2grp-3 { 
+			fsl,pins = <
+				MX6QDL_PAD_EIM_D26__UART2_TX_DATA   0x1b0b1
+				MX6QDL_PAD_EIM_D27__UART2_RX_DATA   0x1b0b1
+				MX6QDL_PAD_EIM_D28__UART2_CTS_B 0x1b0b1
+				MX6QDL_PAD_EIM_D29__UART2_RTS_B 0x1b0b1
 			>;
 		};
 	};
@@ -511,8 +598,9 @@
 
 &uart2 {
 	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_uart2_2>;
+	pinctrl-0 = <&pinctrl_uart2_3>;
 	fsl,uart-has-rtscts;
+/*	fsl,dte-mode;*/
 	status = "okay";
 };
 
@@ -524,8 +612,13 @@
 
 &uart5 {
 	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_uart5_1>;
-	fsl,uart-has-rtscts;
+	pinctrl-0 = <&pinctrl_uart5_2>;
+	status = "okay";
+};
+
+&pwm1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_pwm1_1>;
 	status = "okay";
 };
 
