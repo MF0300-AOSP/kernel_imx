@@ -29,6 +29,7 @@
 #include <linux/random.h>
 #include <linux/slab.h>
 #include <linux/wakelock.h>
+#include <linux/gpio.h>
 
 #include <trace/events/mmc.h>
 
@@ -2288,6 +2289,7 @@ int mmc_hw_reset_check(struct mmc_host *host)
 }
 EXPORT_SYMBOL(mmc_hw_reset_check);
 
+extern bool wifi_powerpin_enable();
 static int mmc_rescan_try_freq(struct mmc_host *host, unsigned freq)
 {
 	host->f_init = freq;
@@ -2296,6 +2298,22 @@ static int mmc_rescan_try_freq(struct mmc_host *host, unsigned freq)
 	pr_info("%s: %s: trying to init card at %u Hz\n",
 		mmc_hostname(host), __func__, host->f_init);
 #endif
+	if (of_machine_is_compatible("fsl,imx6q-tf9300")){
+#define IMX_GPIO_NR(bank, nr)		(((bank) - 1) * 32 + (nr))	
+#define TF9300_WIFI_RST			IMX_GPIO_NR(3, 18)
+		int count=0;
+		if(strcmp(mmc_hostname(host),"mmc1")==0)
+		{	
+        		while(count<100)
+         		{
+             			if(gpio_get_value_cansleep(TF9300_WIFI_RST) == 1)
+                 			break;
+             			mdelay(100);
+             			count++;
+         		}
+     		}
+	}
+
 	mmc_power_up(host);
 
 	/*
