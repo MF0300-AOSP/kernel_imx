@@ -30,6 +30,10 @@
 #include <linux/mmc/card.h>
 #include <linux/mmc/slot-gpio.h>
 
+#include <linux/gpio.h>
+
+#include <linux/bcm_bt_gpio.h>
+
 #include "sdhci.h"
 
 #define DRIVER_NAME "sdhci"
@@ -1697,6 +1701,39 @@ static int sdhci_get_ro(struct mmc_host *mmc)
 	return ret;
 }
 
+static int sdhci_set_sdio_status(struct mmc_host *mmc, int val)
+{
+	printk("sdhci_set_sdio_status\n");
+	struct sdhci_host *host = mmc_priv(mmc);
+
+	if (!(mmc->restrict_caps & RESTRICT_CARD_TYPE_SDIO))
+                return 0;
+                
+   	if(val){
+		printk("sdhci_set_sdio_status:val = 1\n");
+		if (of_machine_is_compatible("fsl,imx6q-tf9300")){
+
+		int count=0;
+		if (mmc->restrict_caps & RESTRICT_CARD_TYPE_SDIO)
+		{	
+        		while(count<100)
+         		{
+             			if(gpio_get_value_cansleep(get_wifi_power_gpio()) == 1)
+                 			break;
+             			mdelay(100);
+             			count++;
+         		}
+     		}
+		}	
+	}
+	else{
+		printk("sdhci_set_sdio_status:val = 0\n");
+	}
+
+        mmc_detect_change(host->mmc, 20);
+        return 0;
+}
+
 static void sdhci_enable_sdio_irq_nolock(struct sdhci_host *host, int enable)
 {
 	if (host->flags & SDHCI_DEVICE_DEAD)
@@ -2109,6 +2146,7 @@ static const struct mmc_host_ops sdhci_ops = {
 	.set_ios	= sdhci_set_ios,
 	.get_cd		= sdhci_get_cd,
 	.get_ro		= sdhci_get_ro,
+	.set_sdio_status 	= sdhci_set_sdio_status,
 	.hw_reset	= sdhci_hw_reset,
 	.enable_sdio_irq = sdhci_enable_sdio_irq,
 	.start_signal_voltage_switch	= sdhci_start_signal_voltage_switch,

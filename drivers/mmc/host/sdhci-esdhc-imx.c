@@ -992,6 +992,9 @@ sdhci_esdhc_imx_probe_dt(struct platform_device *pdev,
 	if (of_find_property(np, "enable-sdio-wakeup", NULL))
 		host->mmc->pm_caps |= MMC_PM_WAKE_SDIO_IRQ;
 
+	if (of_find_property(np, "supports-sdio", NULL))
+		host->mmc->restrict_caps |= RESTRICT_CARD_TYPE_SDIO;
+
 	return 0;
 }
 #else

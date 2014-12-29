@@ -903,6 +903,12 @@ config BROADCOM_BLUETOOTH_RFKILL
 	help
 	Say Y to get the standard rfkill interface of Bluetooth
 
+config BROADCOM_WIFI_GPIO
+	tristate "Broadcom WiFi GPIO interface support"
+        default n
+        help
+        Say Y to get the gpio interface of WiFi (BCM4330)
+
 config MX6_IR
 	bool "MX6 IR Support"
 	depends on PWM_IMX

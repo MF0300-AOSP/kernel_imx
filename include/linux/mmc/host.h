@@ -124,6 +124,7 @@ struct mmc_host_ops {
 	void	(*set_ios)(struct mmc_host *host, struct mmc_ios *ios);
 	int	(*get_ro)(struct mmc_host *host);
 	int	(*get_cd)(struct mmc_host *host);
+	int	(*set_sdio_status)(struct mmc_host *host, int val);
 
 	void	(*enable_sdio_irq)(struct mmc_host *host, int enable);
 
@@ -284,6 +285,9 @@ struct mmc_host {
 #define MMC_CAP2_NO_PRESCAN_POWERUP (1 << 14)	/* Don't power up before scan */
 
 	mmc_pm_flag_t		pm_caps;	/* supported pm features */
+	
+	u32			restrict_caps;
+#define RESTRICT_CARD_TYPE_SDIO	(1 << 1)
 
 #ifdef CONFIG_MMC_CLKGATE
 	int			clk_requests;	/* internal reference counter */
@@ -385,6 +389,7 @@ int mmc_add_host(struct mmc_host *);
 void mmc_remove_host(struct mmc_host *);
 void mmc_free_host(struct mmc_host *);
 void mmc_of_parse(struct mmc_host *host);
+int mmc_host_rescan(struct mmc_host *host, int val);
 
 #ifdef CONFIG_MMC_EMBEDDED_SDIO
 extern void mmc_set_embedded_sdio_data(struct mmc_host *host,

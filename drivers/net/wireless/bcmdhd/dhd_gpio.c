@@ -5,6 +5,8 @@
 
 #include <linux/gpio.h>
 #include <linux/of_gpio.h>
+#include <linux/bcm_bt_gpio.h>
+#include <linux/mmc/host.h>
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
 #include <asm/system_misc.h>
@@ -32,33 +34,6 @@ struct resource dhd_wlan_resources = {0};
 struct wifi_platform_data dhd_wlan_control = {0};
 
 #ifdef CUSTOMER_OOB
-#define IMX_GPIO_NR(bank, nr)		(((bank) - 1) * 32 + (nr))
-#define TF9300_WIFI_HOST_WAKE		IMX_GPIO_NR(3, 16)
-#define TF9300_WIFI_RST			IMX_GPIO_NR(3, 18)
-
-void wifi_power(int nSwitch) 
-{
-	int ret;
-
-	ret = gpio_request_one(TF9300_WIFI_RST, GPIOF_OUT_INIT_LOW, "wifi-reset");
-	if (ret) {
-		pr_err("failed to get GPIO TF9300_WIFI_RST: %d\n",
-			ret);
-		return;
-	}
-
-	// wifi and bt pins setting
-	printk("**%s:%d** set wifi gpio (%d)\n", __func__, __LINE__, nSwitch);
-	gpio_set_value_cansleep(TF9300_WIFI_RST, 0);
-	mdelay(100); 
-	if (nSwitch) {
-		gpio_set_value_cansleep(TF9300_WIFI_RST, 1);
-		msleep(100);
-	}
-
-	gpio_free(TF9300_WIFI_RST);
-}
-
 uint bcm_wlan_get_oob_irq(void)
 {
 	uint host_oob_irq = 0;
@@ -69,7 +44,7 @@ uint bcm_wlan_get_oob_irq(void)
 	gpio_direction_input(EXYNOS4_GPX0(7));
 #endif
 
-	host_oob_irq = gpio_to_irq(TF9300_WIFI_HOST_WAKE);
+	host_oob_irq = gpio_to_irq(get_wifi_host_wakeup_gpio());
 	printk("host_oob_irq: %d \r\n", host_oob_irq);
 
 	return host_oob_irq;
@@ -88,7 +63,7 @@ uint bcm_wlan_get_oob_irq_flags(void)
 }
 #endif
 
-extern void wifi_power(int nSwitch);
+//extern void wifi_power(int nSwitch);
 int bcm_wlan_set_power(bool on)
 {
 	int err = 0;
@@ -113,11 +88,15 @@ int bcm_wlan_set_carddetect(bool present)
 #ifdef CONFIG_MACH_ODROID_4210
 		err = sdhci_s3c_force_presence_change(&sdmmc_channel, 1);
 #endif
-	} else {
+		if(of_machine_is_compatible("fsl,imx6q-tf9300"))
+			mmc_host_rescan(NULL, 1);
+	} else{ 
 		printk("======== Card detection to remove SDIO card! ========\n");
 #ifdef CONFIG_MACH_ODROID_4210
 		err = sdhci_s3c_force_presence_change(&sdmmc_channel, 0);
 #endif
+		if(of_machine_is_compatible("fsl,imx6q-tf9300"))
+			mmc_host_rescan(NULL, 0);
 	}
 
 	return err;
