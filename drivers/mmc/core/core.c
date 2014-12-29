@@ -2298,7 +2298,8 @@ static int mmc_rescan_try_freq(struct mmc_host *host, unsigned freq)
 	pr_info("%s: %s: trying to init card at %u Hz\n",
 		mmc_hostname(host), __func__, host->f_init);
 #endif
-	if (of_machine_is_compatible("fsl,imx6q-tf9300")){
+	if ((of_machine_is_compatible("fsl,imx6q-tf9300"))||
+		(of_machine_is_compatible("fsl,imx6q-mf0300"))){
 #define IMX_GPIO_NR(bank, nr)		(((bank) - 1) * 32 + (nr))	
 #define TF9300_WIFI_RST			IMX_GPIO_NR(3, 18)
 		int count=0;

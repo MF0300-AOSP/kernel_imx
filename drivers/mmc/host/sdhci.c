@@ -1711,7 +1711,8 @@ static int sdhci_set_sdio_status(struct mmc_host *mmc, int val)
                 
    	if(val){
 		printk("sdhci_set_sdio_status:val = 1\n");
-		if (of_machine_is_compatible("fsl,imx6q-tf9300")){
+		if ((of_machine_is_compatible("fsl,imx6q-tf9300"))||
+			(of_machine_is_compatible("fsl,imx6q-mf0300"))){
 
 		int count=0;
 		if (mmc->restrict_caps & RESTRICT_CARD_TYPE_SDIO)

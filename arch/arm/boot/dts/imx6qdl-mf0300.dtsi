@@ -348,6 +348,13 @@
 		bt-host-wakeup-gpios = <&gpio3 30 0>;
 		status = "okay";
 	};
+
+	wireless_gpio {
+		compatible = "broadcom,bcm_wifi_gpio";
+		wifi-power-gpio = <&gpio3 18 0>;
+		wifi-host-wakeup-gpio = <&gpio3 16 0>;
+		status = "okay";
+	};
 };
 
 &audmux {
