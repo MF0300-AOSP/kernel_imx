@@ -309,7 +309,7 @@ static int snvs_rtc_probe(struct platform_device *pdev)
 	 */
 	
 	if ((!of_machine_is_compatible("fsl,imx6q-tf9300"))&&
-		((!of_machine_is_compatible("fsl,imx6q-mf0200"))&&
+		(!of_machine_is_compatible("fsl,imx6q-mf0200"))&&
 		(!of_machine_is_compatible("fsl,imx6q-mf0300")))
 	{
 		if (!pm_power_off)
