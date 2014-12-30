@@ -5,7 +5,7 @@
 
 #include <linux/gpio.h>
 #include <linux/of_gpio.h>
-#include <linux/bcm_bt_gpio.h>
+#include <linux/bcm_wifi_gpio.h>
 #include <linux/mmc/host.h>
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
@@ -69,7 +69,7 @@ int bcm_wlan_set_power(bool on)
 	int err = 0;
 
 	if ((of_machine_is_compatible("fsl,imx6q-tf9300"))||
-		(of_machine_is_compatible("fsl,imx6q-mf0300")))
+-               (of_machine_is_compatible("fsl,imx6q-mf0300")))
 	{
 		if(on)
              		wifi_power(1);
@@ -90,7 +90,7 @@ int bcm_wlan_set_carddetect(bool present)
 		err = sdhci_s3c_force_presence_change(&sdmmc_channel, 1);
 #endif
 		if ((of_machine_is_compatible("fsl,imx6q-tf9300"))||
-			(of_machine_is_compatible("fsl,imx6q-mf0300")))
+-               (of_machine_is_compatible("fsl,imx6q-mf0300")))
 			mmc_host_rescan(NULL, 1);
 	} else{ 
 		printk("======== Card detection to remove SDIO card! ========\n");
@@ -98,7 +98,7 @@ int bcm_wlan_set_carddetect(bool present)
 		err = sdhci_s3c_force_presence_change(&sdmmc_channel, 0);
 #endif
 		if ((of_machine_is_compatible("fsl,imx6q-tf9300"))||
-			(of_machine_is_compatible("fsl,imx6q-mf0300")))
+-               (of_machine_is_compatible("fsl,imx6q-mf0300")))
 			mmc_host_rescan(NULL, 0);
 	}
 

@@ -32,7 +32,7 @@
 
 #include <linux/gpio.h>
 
-#include <linux/bcm_bt_gpio.h>
+#include <linux/bcm_wifi_gpio.h>
 
 #include "sdhci.h"
 
@@ -1708,30 +1708,8 @@ static int sdhci_set_sdio_status(struct mmc_host *mmc, int val)
 
 	if (!(mmc->restrict_caps & RESTRICT_CARD_TYPE_SDIO))
                 return 0;
-                
-   	if(val){
-		printk("sdhci_set_sdio_status:val = 1\n");
-		if ((of_machine_is_compatible("fsl,imx6q-tf9300"))||
-			(of_machine_is_compatible("fsl,imx6q-mf0300"))){
 
-		int count=0;
-		if (mmc->restrict_caps & RESTRICT_CARD_TYPE_SDIO)
-		{	
-        		while(count<100)
-         		{
-             			if(gpio_get_value_cansleep(get_wifi_power_gpio()) == 1)
-                 			break;
-             			mdelay(100);
-             			count++;
-         		}
-     		}
-		}	
-	}
-	else{
-		printk("sdhci_set_sdio_status:val = 0\n");
-	}
-
-        mmc_detect_change(host->mmc, 20);
+        mmc_detect_change(host->mmc, msecs_to_jiffies(200));
         return 0;
 }
 

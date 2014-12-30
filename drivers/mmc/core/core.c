@@ -38,6 +38,8 @@
 #include <linux/mmc/mmc.h>
 #include <linux/mmc/sd.h>
 
+#include <linux/bcm_wifi_gpio.h>
+
 #include "core.h"
 #include "bus.h"
 #include "host.h"
@@ -2300,14 +2302,13 @@ static int mmc_rescan_try_freq(struct mmc_host *host, unsigned freq)
 #endif
 	if ((of_machine_is_compatible("fsl,imx6q-tf9300"))||
 		(of_machine_is_compatible("fsl,imx6q-mf0300"))){
-#define IMX_GPIO_NR(bank, nr)		(((bank) - 1) * 32 + (nr))	
-#define TF9300_WIFI_RST			IMX_GPIO_NR(3, 18)
+
 		int count=0;
-		if(strcmp(mmc_hostname(host),"mmc1")==0)
+		if (host->restrict_caps & RESTRICT_CARD_TYPE_SDIO)
 		{	
         		while(count<100)
          		{
-             			if(gpio_get_value_cansleep(TF9300_WIFI_RST) == 1)
+             			if(gpio_get_value_cansleep(get_wifi_power_gpio()) == 1)
                  			break;
              			mdelay(100);
              			count++;

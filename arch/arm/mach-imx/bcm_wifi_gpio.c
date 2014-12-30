@@ -32,8 +32,6 @@
 #include <linux/gpio.h>
 #include <linux/delay.h>
 
-#include <linux/bcm_bt_gpio.h>
-
 static int wifi_power_gpio;
 static int wifi_host_wakeup_gpio;
 
