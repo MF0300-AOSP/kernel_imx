@@ -343,11 +343,20 @@
 	bt_rfkill {
 		compatible = "broadcom,bcm_bt_rfkill";
 		bt-power-gpios = <&gpio3 24 0>;
-		bt-wakeup-gpios = <&gpio3 23 0>;
 		bt-reset-gpios = <&gpio3 25 0>;
-		bt-host-wakeup-gpios = <&gpio3 30 0>;
 		status = "okay";
 	};
+
+	bluesleep {
+		compatible = "imx,bcm4339_bluesleep";
+		host-wake-gpio = <&gpio3 30 0>;
+		ext-wake-gpio = <&gpio3 23 0>;
+		interrupt-parent = <&gpio3>;
+		interrupts = <30 0>;
+		interrupt-names = "bt_host_wake";
+		status = "okay";
+	};
+
 
 	wireless_gpio {
 		compatible = "broadcom,bcm_wifi_gpio";

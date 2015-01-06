@@ -37,9 +37,9 @@ static int system_in_suspend;
 
 struct bcm_bt_rfkill_data {
 	int bt_reset_gpio;
-	int bt_wakeup_gpio;
+//	int bt_wakeup_gpio;
 	int bt_power_gpio;
-	int bt_host_wakeup_gpio;
+//	int bt_host_wakeup_gpio;
 };
 
 struct bcm_bt_rfkill_pdata {
@@ -49,12 +49,12 @@ static int bcm_bt_rfkill_power_change(void *rfkdata, int status)
 {
 	struct bcm_bt_rfkill_data *data = rfkdata;
 
-        gpio_set_value(data->bt_wakeup_gpio, 0);
+//        gpio_set_value(data->bt_wakeup_gpio, 0);
         gpio_set_value(data->bt_power_gpio, 0);
         gpio_set_value(data->bt_reset_gpio, 0);
         if (status) {
 		msleep(10);
-                gpio_set_value(data->bt_wakeup_gpio, 0);
+//                gpio_set_value(data->bt_wakeup_gpio, 1);
                 gpio_set_value(data->bt_power_gpio, 1);
                 gpio_set_value(data->bt_reset_gpio, 1);
         }
@@ -147,7 +147,7 @@ static int bcm_bt_rfkill_probe(struct platform_device *pdev)
 		if (!pdata)
 			return -EINVAL;
 	}
-
+/*
 	data->bt_wakeup_gpio = of_get_named_gpio(np, "bt-wakeup-gpios", 0);
 	if (gpio_is_valid(data->bt_wakeup_gpio)) {
 		rc = devm_gpio_request_one(&pdev->dev,
@@ -159,7 +159,7 @@ static int bcm_bt_rfkill_probe(struct platform_device *pdev)
 			goto error_request_gpio;
 		}
 	}
-
+*/
 	data->bt_power_gpio = of_get_named_gpio(np, "bt-power-gpios", 0);
 	if (gpio_is_valid(data->bt_power_gpio)) {
 		rc = devm_gpio_request_one(&pdev->dev,
@@ -183,7 +183,7 @@ static int bcm_bt_rfkill_probe(struct platform_device *pdev)
 			goto error_request_gpio;
 		}
 	}
-
+/*
 	data->bt_host_wakeup_gpio = of_get_named_gpio(np, "bt-host-wakeup-gpios", 0);
 	if (gpio_is_valid(data->bt_host_wakeup_gpio)) {
 		rc = devm_gpio_request_one(&pdev->dev,
@@ -195,7 +195,7 @@ static int bcm_bt_rfkill_probe(struct platform_device *pdev)
 			goto error_request_gpio;
 		}
 	}
-
+*/
 	rc = register_pm_notifier(&bcm_bt_power_notifier);
 	if (rc)
 		goto error_check_func;
