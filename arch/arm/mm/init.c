@@ -35,9 +35,28 @@
 #include <asm/mach/map.h>
 
 #include "mm.h"
+#include <linux/fic_extend.h>
+
 
 static unsigned long phys_initrd_start __initdata = 0;
 static unsigned long phys_initrd_size __initdata = 0;
+
+unsigned long g_nMemorySize=0;
+unsigned long g_nNrTotal=0;
+unsigned long g_free=0;
+unsigned long g_reserve=0;
+unsigned long g_high=0;
+
+unsigned long fic_get_memory_size() {
+   printk(KERN_NOTICE "Memory: %luk/%luk available, %luk reserved, %luK highmem\n",
+       g_nNrTotal,
+       g_free,
+       g_reserve,
+       g_high);
+   printk("Total Memory: %luk\n", g_nMemorySize);
+   return g_nMemorySize;
+}
+
 
 static int __init early_initrd(char *p)
 {
@@ -641,6 +660,14 @@ void __init mem_init(void)
 	}
 	printk(" = %luMB total\n", num_physpages >> (20 - PAGE_SHIFT));
 
+	
+	g_nNrTotal=nr_free_pages() << (PAGE_SHIFT-10);
+	g_free=free_pages << (PAGE_SHIFT-10);
+	g_reserve=reserved_pages << (PAGE_SHIFT-10);
+	g_high=totalhigh_pages << (PAGE_SHIFT-10);
+	
+	g_nMemorySize=(free_pages << (PAGE_SHIFT-10)) + (reserved_pages << (PAGE_SHIFT-10));	
+	
 	printk(KERN_NOTICE "Memory: %luk/%luk available, %luk reserved, %luK highmem\n",
 		nr_free_pages() << (PAGE_SHIFT-10),
 		free_pages << (PAGE_SHIFT-10),
