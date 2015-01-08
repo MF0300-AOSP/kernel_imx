@@ -36,7 +36,7 @@
 
 static struct reg_default init_list[] = {
 	{RT5631_SPK_OUT_VOL		, 0x4A4A},
-	{RT5631_HP_OUT_VOL		, 0x4848},
+	{RT5631_HP_OUT_VOL		, 0x4747},
 	{RT5631_MONO_AXO_1_2_VOL	, 0xa080},
 	{RT5631_ADC_CTRL_1		, 0x000F},
 	{RT5631_ADC_REC_MIXER		, 0xb0f0},
@@ -150,7 +150,7 @@ static const struct reg_default rt5631_reg[] = {
 static const struct reg_default fix_reg[] = {
     { RT5631_RESET, 0x0000 },
     { RT5631_SPK_OUT_VOL, 0xca4a },
-    { RT5631_HP_OUT_VOL, 0x4848 },
+    { RT5631_HP_OUT_VOL, 0x4747 },
     { RT5631_MONO_AXO_1_2_VOL, 0xa080 },
     { RT5631_AUX_IN_VOL, 0x0808 },
     { RT5631_STEREO_DAC_VOL_1, 0x0000 },
