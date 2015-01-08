@@ -656,6 +656,7 @@
         bus-width = <4>;
         non-removable;
 	keep-power-in-suspend;
+	supports-sdio;
         status = "okay";
 };
 
