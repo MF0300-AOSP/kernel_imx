@@ -2301,6 +2301,7 @@ static int mmc_rescan_try_freq(struct mmc_host *host, unsigned freq)
 		mmc_hostname(host), __func__, host->f_init);
 #endif
 	if ((of_machine_is_compatible("fsl,imx6q-tf9300"))||
+        (of_machine_is_compatible("fsl,imx6q-mf0200"))||
 		(of_machine_is_compatible("fsl,imx6q-mf0300"))){
 
 		int count=0;
