@@ -909,6 +909,12 @@ config BROADCOM_WIFI_GPIO
         help
         Say Y to get the gpio interface of WiFi (BCM4330)
 
+config FIC_PWR_MANAGER
+	tristate "FIC Fixed regulater for suspend support"
+        default n
+        help
+        Say Y to get the fixed regulator for suspend support
+
 config MX6_IR
 	bool "MX6 IR Support"
 	depends on PWM_IMX
