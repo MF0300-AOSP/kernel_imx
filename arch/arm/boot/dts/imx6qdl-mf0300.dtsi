@@ -302,32 +302,37 @@
 
 		cash-drawer-gpio1 {
 			label = "CASH_DRAWER_GPIO1";
-			gpios = <&gpio4 26 1>;
+			gpios = <&gpio4 26 0>;
 			linux,default-trigger = "cash-drawer-gpio1";
+			default-state = "on";
 		};
 
 		cash-drawer-gpio2 {
 			label = "CASH_DRAWER_GPIO2";
-			gpios = <&gpio4 25 1>;
+			gpios = <&gpio4 25 0>;
 			linux,default-trigger = "cash-drawer-gpio2";
+			default-state = "on";
 		};
 
 		stadnby-led {
 			label = "STANDBY_LED";
-			gpios = <&gpio4 14 1>;
+			gpios = <&gpio4 14 0>;
 			linux,default-trigger = "standby-led";
+			default-state = "on";
 		};
 
 		power-led {
 			label = "POWER_LED";
-			gpios = <&gpio4 15 1>;
+			gpios = <&gpio4 15 0>;
 			linux,default-trigger = "power-led";
+			default-state = "on";
 		};
 
 		update-led {
 			label = "UPDATE_LED";
-			gpios = <&gpio1 6 1>;
+			gpios = <&gpio1 6 0>;
 			linux,default-trigger = "update-led";
+			default-state = "on";
 		};
 	};
 /*
