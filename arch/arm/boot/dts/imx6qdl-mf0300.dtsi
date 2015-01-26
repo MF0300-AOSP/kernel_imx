@@ -305,6 +305,7 @@
 			gpios = <&gpio4 26 0>;
 			linux,default-trigger = "cash-drawer-gpio1";
 			default-state = "on";
+			retain-state-suspended;
 		};
 
 		cash-drawer-gpio2 {
@@ -312,6 +313,7 @@
 			gpios = <&gpio4 25 0>;
 			linux,default-trigger = "cash-drawer-gpio2";
 			default-state = "on";
+			retain-state-suspended;
 		};
 
 		stadnby-led {
@@ -319,6 +321,7 @@
 			gpios = <&gpio4 14 0>;
 			linux,default-trigger = "standby-led";
 			default-state = "on";
+			retain-state-suspended;
 		};
 
 		power-led {
@@ -326,6 +329,7 @@
 			gpios = <&gpio4 15 0>;
 			linux,default-trigger = "power-led";
 			default-state = "on";
+			retain-state-suspended;
 		};
 
 		update-led {
@@ -333,6 +337,7 @@
 			gpios = <&gpio1 6 0>;
 			linux,default-trigger = "update-led";
 			default-state = "on";
+			retain-state-suspended;
 		};
 	};
 /*
