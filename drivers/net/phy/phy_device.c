@@ -34,6 +34,8 @@
 #include <linux/ethtool.h>
 #include <linux/phy.h>
 
+#include <linux/gpio.h>
+
 #include <asm/io.h>
 #include <asm/irq.h>
 #include <asm/uaccess.h>
@@ -791,9 +793,15 @@ EXPORT_SYMBOL(genphy_config_aneg);
  *   current link value.  In order to do this, we need to read
  *   the status register twice, keeping the second value.
  */
+
+#define IMX_GPIO_NR(bank, nr)		(((bank) - 1) * 32 + (nr))
+#define MF0200_ENET_LED1_INT   IMX_GPIO_NR(7, 0)
+#define MF0200_ENET_LED2_INT   IMX_GPIO_NR(5, 2)
+
 int genphy_update_link(struct phy_device *phydev)
 {
 	int status;
+    int EnetLed1, EnetLed2;
 
 	/* Do a fake read */
 	status = phy_read(phydev, MII_BMSR);
@@ -811,6 +819,15 @@ int genphy_update_link(struct phy_device *phydev)
 		phydev->link = 0;
 	else
 		phydev->link = 1;
+
+    if (of_machine_is_compatible("fsl,imx6q-mf0200")) {
+        EnetLed1=gpio_get_value(MF0200_ENET_LED1_INT);
+        EnetLed2=gpio_get_value(MF0200_ENET_LED2_INT);
+        if (EnetLed1==1 && EnetLed2==1)
+            phydev->link = 0;
+        else
+            phydev->link = 1;
+    }
 
 	return 0;
 }
@@ -1125,6 +1142,13 @@ static struct phy_driver genphy_driver = {
 static int __init phy_init(void)
 {
 	int rc;
+
+    if (of_machine_is_compatible("fsl,imx6q-mf0200")) {
+        gpio_request(MF0200_ENET_LED1_INT, "enet-led1-int");
+        gpio_direction_input(MF0200_ENET_LED1_INT);
+        gpio_request(MF0200_ENET_LED2_INT, "enet-led2-int");
+        gpio_direction_input(MF0200_ENET_LED2_INT);
+    }
 
 	rc = mdio_bus_init();
 	if (rc)
