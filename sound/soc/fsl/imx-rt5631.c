@@ -39,12 +39,19 @@ struct imx_rt5631_data {
 	unsigned int clk_frequency;
 };
 
+#define AMP_MAX 3
+
 struct imx_priv {
 	int hp_gpio;
 	int hp_active_low;
     struct snd_soc_codec *codec;
 	struct platform_device *pdev;
 	struct snd_card *snd_card;
+	int clk_gpio;
+	int clk_active_low;
+	int amp_spk_gpio[AMP_MAX];
+	int amp_spk_active_low[AMP_MAX];
+	int amp_total;
 };
 
 static struct imx_priv card_priv;
@@ -103,6 +110,31 @@ static int hpjack_status_check(void)
 	kfree(buf);
 
 	return ret;
+}
+
+static int imx_hifi_startup(struct snd_pcm_substream *substream)
+{
+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+	struct imx_priv *priv = &card_priv;
+
+	if (gpio_is_valid(priv->clk_gpio)) 
+		if (!codec_dai->active)
+			gpio_set_value(priv->clk_gpio, !priv->clk_active_low);
+	return 0;
+}
+
+static void imx_hifi_shutdown(struct snd_pcm_substream *substream)
+{
+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+	struct imx_priv *priv = &card_priv;
+
+	if (gpio_is_valid(priv->clk_gpio)) 
+		if (!codec_dai->active)  /* why ? not active disable clk */
+			gpio_set_value(priv->clk_gpio, !!priv->clk_active_low);
+
+	return;
 }
 
 static int imx_hifi_hw_params(struct snd_pcm_substream *substream,
@@ -166,6 +198,8 @@ static int imx_hifi_hw_params(struct snd_pcm_substream *substream,
 }
 
 static struct snd_soc_ops imx_hifi_ops = {
+	.startup = imx_hifi_startup,
+	.shutdown = imx_hifi_shutdown,
 	.hw_params = imx_hifi_hw_params,
 };
 
@@ -212,9 +246,30 @@ static ssize_t show_headphone(struct device_driver *dev, char *buf)
 }
 static DRIVER_ATTR(headphone, S_IRUGO | S_IWUSR, show_headphone, NULL);
 
+
+static int spk_amp_event(struct snd_soc_dapm_widget *w,
+                         struct snd_kcontrol *kcontrol, int event)
+{
+        struct imx_priv *priv = &card_priv;
+        struct platform_device *pdev = priv->pdev;
+	int i;
+
+	for (i=0; i<priv->amp_total; i++){
+		if (gpio_is_valid(priv->amp_spk_gpio[i])){
+	
+		        if (SND_SOC_DAPM_EVENT_ON(event))
+				gpio_set_value(priv->amp_spk_gpio[i], !priv->amp_spk_active_low[i]);
+ 	       	else
+				gpio_set_value(priv->amp_spk_gpio[i], !!priv->amp_spk_active_low[i]);
+		}
+	}
+        return 0;
+}
+
+
 static const struct snd_soc_dapm_widget imx_rt5631_dapm_widgets[] = {
     SND_SOC_DAPM_HP("Headphone Jack", NULL),
-	SND_SOC_DAPM_SPK("Ext Spk", NULL),
+	SND_SOC_DAPM_SPK("Ext Spk", spk_amp_event),
 	SND_SOC_DAPM_MIC("Mic Jack", NULL),
 	SND_SOC_DAPM_LINE("Line In Jack", NULL),
 };
@@ -229,6 +284,7 @@ static int imx_rt5631_probe(struct platform_device *pdev)
 	struct imx_rt5631_data *data;
     struct clk *codec_clk = NULL;
     int int_port, ext_port;
+    enum of_gpio_flags flags;
 	int ret;
     int i;
 
@@ -310,6 +366,29 @@ audmux_bypass:
 
     priv->hp_gpio = of_get_named_gpio_flags(pdev->dev.of_node, "hp-det-gpios", 0,
 				(enum of_gpio_flags *)&priv->hp_active_low);
+	priv->clk_gpio = of_get_named_gpio_flags(pdev->dev.of_node, "clk-enable", 0, &flags);
+	if (gpio_is_valid(priv->clk_gpio)){ 
+		priv->clk_active_low = flags & OF_GPIO_ACTIVE_LOW;
+		devm_gpio_request_one(&pdev->dev, priv->clk_gpio, priv->clk_active_low?GPIOF_OUT_INIT_HIGH:GPIOF_OUT_INIT_LOW,
+					"clk-enable");
+	}
+	for (i=0;i<AMP_MAX;i++){
+		priv->amp_spk_gpio[i] = of_get_named_gpio_flags(pdev->dev.of_node, "amp-spk-enable",i ,&flags);
+		if (gpio_is_valid(priv->amp_spk_gpio[i])){ 
+			char gpio_name[128];
+			priv->amp_spk_active_low[i] = flags & OF_GPIO_ACTIVE_LOW;
+			sprintf(gpio_name, "amp-spk-enable%d", i);
+			devm_gpio_request_one(&pdev->dev, priv->amp_spk_gpio[i], 
+					priv->amp_spk_active_low?GPIOF_OUT_INIT_HIGH:GPIOF_OUT_INIT_LOW,
+					gpio_name);
+		}
+		else{
+			priv->amp_total = i;
+			break;
+		}
+	}
+        dev_dbg(&codec_dev->dev, "amp_total = %d\n", priv->amp_total);
+
 	data->dai.name = "HiFi";
 	data->dai.stream_name = "HiFi";
 	data->dai.codec_dai_name = "rt5631-hifi";

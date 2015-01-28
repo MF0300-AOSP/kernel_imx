@@ -130,7 +130,7 @@
 			enable-active-high;
 			regulator-boot-on;
 		};
-
+/*
 		reg_spk_en: spk_en {
 			compatible = "regulator-fixed";
 			regulator-name = "spk-en";
@@ -149,7 +149,7 @@
 			gpio = <&gpio5 11 GPIO_ACTIVE_HIGH>;
 			enable-active-high;
 		};
-
+*/
 		reg_lvds_en: lvds_en {
 			compatible = "regulator-fixed";
 			regulator-name = "lvds-en";
@@ -179,7 +179,7 @@
 			enable-active-high;
 			regulator-boot-on;
 		};
-
+/*
 		reg_alc_clk_en: alc_clk_en {
 			compatible = "regulator-fixed";
 			regulator-name = "alc-clk-en";
@@ -189,7 +189,7 @@
 			enable-active-high;
 			regulator-boot-on;
 		};
-
+*/
 		reg_edp_en: enp_en {
 			compatible = "regulator-fixed";
 			regulator-name = "edp-en";
@@ -265,6 +265,8 @@
 		        "MIC2",  "Line In Jack";
 		mux-int-port = <2>;
 		mux-ext-port = <3>;
+		clk-enable = <&gpio5 20 0>;
+		amp-spk-enable = <&gpio4 24 0>, <&gpio5 11 1>;
 	};
 
 	sound-hdmi {
