@@ -915,6 +915,12 @@ config FIC_PWR_MANAGER
         help
         Say Y to get the fixed regulator for suspend support
 
+config FIC_NO_S3
+	tristate "FIC WakeLock to prevent suspend"
+        default n
+        help
+        Say Y to get the stopping suspend support 
+
 config MX6_IR
 	bool "MX6 IR Support"
 	depends on PWM_IMX
