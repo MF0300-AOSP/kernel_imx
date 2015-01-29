@@ -823,7 +823,7 @@ int genphy_update_link(struct phy_device *phydev)
     if (of_machine_is_compatible("fsl,imx6q-mf0200")) {
         EnetLed1=gpio_get_value(MF0200_ENET_LED1_INT);
         EnetLed2=gpio_get_value(MF0200_ENET_LED2_INT);
-        if (EnetLed1==1 && EnetLed2==1)
+        if (EnetLed1==1 && EnetLed2==0)
             phydev->link = 0;
         else
             phydev->link = 1;
