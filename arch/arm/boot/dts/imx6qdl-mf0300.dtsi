@@ -129,26 +129,7 @@
 			gpio = <&gpio4 9 GPIO_ACTIVE_HIGH>;
 			regulator-boot-on;
 		};
-/*
-		reg_spk_en: spk_en {
-			compatible = "regulator-fixed";
-			regulator-name = "spk-en";
-			regulator-min-microvolt = <5000000>;
-			regulator-max-microvolt = <5000000>;
-			gpio = <&gpio4 24 GPIO_ACTIVE_HIGH>;
-			enable-active-high;
-			regulator-boot-on;
-		};
 
-		reg_amp_sd: amp_sd {
-			compatible = "regulator-fixed";
-			regulator-name = "amp-sd";
-			regulator-min-microvolt = <5000000>;
-			regulator-max-microvolt = <5000000>;
-			gpio = <&gpio5 11 GPIO_ACTIVE_HIGH>;
-			enable-active-high;
-		};
-*/
 		reg_lvds_en: lvds_en {
 			compatible = "regulator-fixed";
 			regulator-name = "lvds-en";
@@ -178,17 +159,7 @@
 			enable-active-high;
 			regulator-boot-on;
 		};
-/*
-		reg_alc_clk_en: alc_clk_en {
-			compatible = "regulator-fixed";
-			regulator-name = "alc-clk-en";
-			regulator-min-microvolt = <5000000>;
-			regulator-max-microvolt = <5000000>;
-			gpio = <&gpio5 20 GPIO_ACTIVE_HIGH>;
-			enable-active-high;
-			regulator-boot-on;
-		};
-*/
+
 		reg_edp_en: enp_en {
 			compatible = "regulator-fixed";
 			regulator-name = "edp-en";
@@ -196,7 +167,6 @@
 			regulator-max-microvolt = <5000000>;
 			gpio = <&gpio5 29 GPIO_ACTIVE_HIGH>;
 			enable-active-high;
-			regulator-boot-on;
 		};
 
 		reg_edp_pwr_en: edp_pwr_en {
@@ -206,7 +176,6 @@
 			regulator-max-microvolt = <5000000>;
 			gpio = <&gpio5 30 GPIO_ACTIVE_HIGH>;
 			enable-active-high;
-			regulator-boot-on;
 		};
 
 		reg_enet_pwr_en: enet_pwr_en {
@@ -245,7 +214,7 @@
 			regulator-max-microvolt = <5000000>;
 			gpio = <&gpio5 7 GPIO_ACTIVE_HIGH>;
 			enable-active-high;
-			regulator-always-on;
+			regulator-boot-on;
 		};
 	};
 
@@ -378,6 +347,22 @@
 
 	no_s3 {
 		compatible = "fic,no_s3";
+		status = "okay";
+	};
+
+	fic_pm {
+		compatible = "fic,fic_pm";
+		regulator-names = "PWR1", "PWR2", "PWR3", "PWR4", "PWR5",
+				  "PWR6", "PWR7", "PWR8";
+
+		PWR1-supply = <&reg_12v>; 
+		PWR2-supply = <&reg_5v>; 
+		PWR3-supply = <&reg_3g>; 
+		PWR4-supply = <&reg_24v>; 
+		PWR5-supply = <&reg_wifi_ldo_1v8>; 
+		PWR6-supply = <&reg_enet_pwr_en>; 
+		PWR7-supply = <&reg_1p8v>; 
+		PWR8-supply = <&reg_usb_flgoc>; 
 		status = "okay";
 	};
 };

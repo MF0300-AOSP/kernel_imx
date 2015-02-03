@@ -245,12 +245,26 @@ static int  fic_pm_remove(struct platform_device *pdev)
 	return 0;
 }
 
+static void fic_pm_shutdown(struct platform_device *pdev)
+{
+	struct device *dev = &pdev->dev;
+
+	pm_suspend_late();
+	mdelay(2000);
+	return;
+}
+
 #ifdef CONFIG_PM
 static int fic_pm_suspend(struct device *dev){
 	return 0;
 }
 
 static int fic_pm_resume(struct device *dev){
+	return 0;
+}
+
+static int fic_pm_poweroff(struct device *dev){
+	pm_suspend_late();
 	return 0;
 }
 
@@ -268,6 +282,7 @@ static int fic_pm_resume_early(struct device *dev){
 static const struct dev_pm_ops fic_pm_ops = {
 	.suspend = fic_pm_suspend,
 	.resume = fic_pm_resume,
+	.poweroff = fic_pm_poweroff,
 	.suspend_late = fic_pm_suspend_late,
 	.resume_early = fic_pm_resume_early,
 };
@@ -276,6 +291,7 @@ static const struct dev_pm_ops fic_pm_ops = {
 static struct platform_driver fic_pm_driver = {
 	.probe	= fic_pm_probe,
 	.remove	= fic_pm_remove,
+	.shutdown = fic_pm_shutdown,
 	.driver = {
 		.name	= "fic_pm",
 		.owner	= THIS_MODULE,
