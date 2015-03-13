@@ -10,6 +10,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+#include <linux/irq.h>
 #include <linux/module.h>
 #include <linux/of.h>
 #include <linux/of_platform.h>
@@ -52,6 +53,7 @@ struct imx_priv {
 	int amp_spk_gpio[AMP_MAX];
 	int amp_spk_active_low[AMP_MAX];
 	int amp_total;
+    int hp_irq;
 };
 
 static struct imx_priv card_priv;
@@ -59,27 +61,12 @@ static struct imx_priv card_priv;
 static int sample_rate = 44100;
 static unsigned int sample_format = SNDRV_PCM_FMTBIT_S16_LE;
 
-static struct snd_soc_jack imx_hp_jack;
-static struct snd_soc_jack_pin imx_hp_jack_pins[] = {
-	{
-		.pin = "Headphone Jack",
-		.mask = SND_JACK_HEADPHONE,
-	},
-};
-
-static struct snd_soc_jack_gpio imx_hp_jack_gpio = {
-	.name = "headphone detect",
-	.report = SND_JACK_HEADPHONE,
-	.debounce_time = 200,
-	.invert = 0,
-};
-
 static int hpjack_status_check(void)
 {
 	struct imx_priv *priv = &card_priv;
 	struct platform_device *pdev = priv->pdev;
 	char *envp[3], *buf;
-	int hp_status, ret;
+	int hp_status;
 
 	if (!gpio_is_valid(priv->hp_gpio))
 		return 0;
@@ -92,16 +79,10 @@ static int hpjack_status_check(void)
 		return -ENOMEM;
 	}
 
-	if (hp_status != priv->hp_active_low) {
+	if (hp_status != priv->hp_active_low)
         snprintf(buf, 32, "STATE=%d", 2);
-		snd_soc_dapm_disable_pin(&priv->codec->dapm, "Ext Spk");
-		ret = imx_hp_jack_gpio.report;
-	} else { 
+	else
 		snprintf(buf, 32, "STATE=%d", 0);
-		snd_soc_dapm_enable_pin(&priv->codec->dapm, "Ext Spk");
-		ret = 0;
-		//snd_kctl_jack_report(priv->snd_card, priv->headphone_kctl, 0);
-	}
 
 	envp[0] = "NAME=headphone";
 	envp[1] = buf;
@@ -109,8 +90,11 @@ static int hpjack_status_check(void)
     kobject_uevent_env(&pdev->dev.kobj, KOBJ_CHANGE, envp);
 	kfree(buf);
 
-	return ret;
+	enable_irq(priv->hp_irq);
+
+	return;
 }
+static DECLARE_DELAYED_WORK(hp_event, hpjack_status_check);
 
 static int imx_hifi_startup(struct snd_pcm_substream *substream)
 {
@@ -203,6 +187,10 @@ static struct snd_soc_ops imx_hifi_ops = {
 	.hw_params = imx_hifi_hw_params,
 };
 
+static int rt5631_jack_func;
+static int rt5631_spk_func;
+static int rt5631_line_in_func;
+
 static int imx_rt5631_gpio_init(struct snd_soc_card *card)
 {
 	struct snd_soc_dai *codec_dai = card->rtd[0].codec_dai;
@@ -211,17 +199,15 @@ static int imx_rt5631_gpio_init(struct snd_soc_card *card)
 
 	priv->codec = codec;
 
-	if (gpio_is_valid(priv->hp_gpio)) {
-		imx_hp_jack_gpio.gpio = priv->hp_gpio;
-		imx_hp_jack_gpio.jack_status_check = hpjack_status_check;
+    return 0;
+}
 
-		snd_soc_jack_new(codec, "Headphone Jack", SND_JACK_HEADPHONE, &imx_hp_jack);
-		snd_soc_jack_add_pins(&imx_hp_jack,
-				ARRAY_SIZE(imx_hp_jack_pins), imx_hp_jack_pins);
-		snd_soc_jack_add_gpios(&imx_hp_jack, 1, &imx_hp_jack_gpio);
-    }
-
-	return 0;
+static irqreturn_t imx_headphone_detect_handler(int irq, void *data)
+{
+	printk(KERN_WARNING"imx_headphone_detect_handler\n ");
+	disable_irq_nosync(irq);
+	schedule_delayed_work(&hp_event, msecs_to_jiffies(200));
+	return IRQ_HANDLED;
 }
 
 static ssize_t show_headphone(struct device_driver *dev, char *buf)
@@ -246,6 +232,96 @@ static ssize_t show_headphone(struct device_driver *dev, char *buf)
 }
 static DRIVER_ATTR(headphone, S_IRUGO | S_IWUSR, show_headphone, NULL);
 
+static const char *jack_function[] = { "off", "on"};
+
+static const char *spk_function[] = { "off", "on" };
+
+static const char *line_in_function[] = { "off", "on" };
+
+static const struct soc_enum rt5631_enum[] = {
+	SOC_ENUM_SINGLE_EXT(2, jack_function),
+	SOC_ENUM_SINGLE_EXT(2, spk_function),
+	SOC_ENUM_SINGLE_EXT(2, line_in_function),
+};
+
+static int rt5631_get_jack(struct snd_kcontrol *kcontrol,
+			     struct snd_ctl_elem_value *ucontrol)
+{
+	ucontrol->value.enumerated.item[0] = rt5631_jack_func;
+	return 0;
+}
+
+static int rt5631_set_jack(struct snd_kcontrol *kcontrol,
+			     struct snd_ctl_elem_value *ucontrol)
+{
+	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
+
+	printk(KERN_WARNING "%s:ucontrol->value.enumerated.item[0]:%d\n", __func__, ucontrol->value.enumerated.item[0]);
+	if (rt5631_jack_func == ucontrol->value.enumerated.item[0])
+		return 0;
+
+	rt5631_jack_func = ucontrol->value.enumerated.item[0];
+	if (rt5631_jack_func)
+		snd_soc_dapm_enable_pin(&codec->dapm, "Headphone Jack");
+	else
+		snd_soc_dapm_disable_pin(&codec->dapm, "Headphone Jack");
+
+	snd_soc_dapm_sync(&codec->dapm);
+	return 1;
+}
+
+static int rt5631_get_spk(struct snd_kcontrol *kcontrol,
+			    struct snd_ctl_elem_value *ucontrol)
+{
+	ucontrol->value.enumerated.item[0] = rt5631_spk_func;
+	return 0;
+}
+
+static int rt5631_set_spk(struct snd_kcontrol *kcontrol,
+			    struct snd_ctl_elem_value *ucontrol)
+{
+	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
+
+	printk(KERN_WARNING "%s:ucontrol->value.enumerated.item[0]:%d\n", __func__, ucontrol->value.enumerated.item[0]);
+
+	if (rt5631_spk_func == ucontrol->value.enumerated.item[0])
+		return 0;
+
+	return 0; //FIC
+	rt5631_spk_func = ucontrol->value.enumerated.item[0];
+	if (rt5631_spk_func)
+		snd_soc_dapm_enable_pin(&codec->dapm, "Ext Spk");
+	else
+		snd_soc_dapm_disable_pin(&codec->dapm, "Ext Spk");
+
+	snd_soc_dapm_sync(&codec->dapm);
+	return 1;
+}
+
+static int rt5631_get_line_in(struct snd_kcontrol *kcontrol,
+			     struct snd_ctl_elem_value *ucontrol)
+{
+	ucontrol->value.enumerated.item[0] = rt5631_line_in_func;
+	return 0;
+}
+
+static int rt5631_set_line_in(struct snd_kcontrol *kcontrol,
+			     struct snd_ctl_elem_value *ucontrol)
+{
+	struct snd_soc_codec *codec = snd_kcontrol_chip(kcontrol);
+
+	if (rt5631_line_in_func == ucontrol->value.enumerated.item[0])
+		return 0;
+
+	rt5631_line_in_func = ucontrol->value.enumerated.item[0];
+	if (rt5631_line_in_func)
+		snd_soc_dapm_enable_pin(&codec->dapm, "Line In Jack");
+	else
+		snd_soc_dapm_disable_pin(&codec->dapm, "Line In Jack");
+
+	snd_soc_dapm_sync(&codec->dapm);
+	return 1;
+}
 
 static int spk_amp_event(struct snd_soc_dapm_widget *w,
                          struct snd_kcontrol *kcontrol, int event)
@@ -274,6 +350,15 @@ static const struct snd_soc_dapm_widget imx_rt5631_dapm_widgets[] = {
 	SND_SOC_DAPM_LINE("Line In Jack", NULL),
 };
 
+static const struct snd_kcontrol_new rt5631_machine_controls[] = {
+	SOC_ENUM_EXT("Jack Function", rt5631_enum[0], rt5631_get_jack,
+		     rt5631_set_jack),
+	SOC_ENUM_EXT("Speaker Function", rt5631_enum[1], rt5631_get_spk,
+		     rt5631_set_spk),
+	SOC_ENUM_EXT("Line In Function", rt5631_enum[1], rt5631_get_line_in,
+		     rt5631_set_line_in),
+};
+
 static int imx_rt5631_probe(struct platform_device *pdev)
 {
     struct device_node *np = pdev->dev.of_node;
@@ -282,9 +367,9 @@ static int imx_rt5631_probe(struct platform_device *pdev)
     struct imx_priv *priv = &card_priv;
 	struct i2c_client *codec_dev;
 	struct imx_rt5631_data *data;
-    struct clk *codec_clk = NULL;
     int int_port, ext_port;
     enum of_gpio_flags flags;
+    struct snd_card *card;
 	int ret;
     int i;
 
@@ -431,6 +516,35 @@ audmux_bypass:
 		}
 	}
 
+    /* Add imx specific controls */
+    card = priv->codec->card->snd_card;
+    for (i = 0; i < ARRAY_SIZE(rt5631_machine_controls); i++) {
+		ret = snd_ctl_add(card,
+				  snd_soc_cnew(&rt5631_machine_controls[i],
+					       priv->codec, rt5631_machine_controls[i].name, priv->codec->name_prefix));
+		if (ret < 0)
+			return ret;
+	}
+
+    /* Add imx specific widgets */
+    snd_soc_dapm_new_controls(&priv->codec->dapm, imx_rt5631_dapm_widgets,
+				  ARRAY_SIZE(imx_rt5631_dapm_widgets));
+
+    snd_soc_dapm_enable_pin(&priv->codec->dapm, "Line In Jack");
+    snd_soc_dapm_sync(&priv->codec->dapm);
+
+    if (priv->hp_gpio != -1) {
+		priv->hp_irq = gpio_to_irq(priv->hp_gpio);
+
+		ret = request_irq(priv->hp_irq,
+			imx_headphone_detect_handler,
+			IRQ_TYPE_EDGE_BOTH, pdev->name, priv);
+
+		if (ret < 0) {
+			ret = -EINVAL;
+			return ret;
+		}
+    }
     goto fail;
 
 fail_hp:

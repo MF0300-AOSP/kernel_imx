@@ -19,6 +19,7 @@
 #include <linux/pm.h>
 #include <linux/i2c.h>
 #include <linux/regmap.h>
+#include <linux/pm_runtime.h>
 #include <sound/core.h>
 #include <sound/pcm.h>
 #include <sound/pcm_params.h>
@@ -107,9 +108,20 @@ static int rt5631_reg_init(struct snd_soc_codec *codec)
 	return 0;
 }
 
+static int rt5631_index_sync(struct snd_soc_codec *codec)
+{
+	int i;
+
+	for (i = 0; i < RT5631_INIT_REG_LEN; i++)
+		if (RT5631_INDEX_ADD == init_list[i].reg ||
+			RT5631_INDEX_DATA == init_list[i].reg)
+			snd_soc_write(codec, init_list[i].reg,
+					init_list[i].def);
+	return 0;
+}
+
 struct rt5631_priv {
 	struct snd_soc_codec *codec;
-	struct regmap *regmap;
 	int codec_version;
 	int master[RT5631_AIFS];
 	int sysclk[RT5631_SCLKS];
@@ -148,56 +160,12 @@ static const struct reg_default rt5631_reg[] = {
 };
 
 static const struct reg_default fix_reg[] = {
-    { RT5631_RESET, 0x0000 },
-    { RT5631_SPK_OUT_VOL, 0xca4a },
-    { RT5631_HP_OUT_VOL, 0x4747 },
-    { RT5631_MONO_AXO_1_2_VOL, 0xa080 },
-    { RT5631_AUX_IN_VOL, 0x0808 },
-    { RT5631_STEREO_DAC_VOL_1, 0x0000 },
-    { RT5631_MIC_CTRL_1, 0x8000 },
-    { RT5631_STEREO_DAC_VOL_2, 0x0000 },
-    { RT5631_ADC_CTRL_1, 0x000f },
-    { RT5631_ADC_REC_MIXER, 0xb0f0 },
-    { RT5631_ADC_CTRL_2, 0x0000 },
-    { RT5631_VDAC_DIG_VOL, 0x0010 },
     { RT5631_OUTMIXER_L_CTRL, 0xdfc0 },
     { RT5631_OUTMIXER_R_CTRL, 0xdfc0 },
-    { RT5631_AXO1MIXER_CTRL, 0x88c0 },
-    { RT5631_AXO2MIXER_CTRL, 0x4242 },
-    { RT5631_MIC_CTRL_2, 0x4400 },
-    { RT5631_DIG_MIC_CTRL, 0x3000 },
-    { RT5631_MONO_INPUT_VOL, 0x8808 },
     { RT5631_SPK_MIXER_CTRL, 0xd8d8 },
     { RT5631_SPK_MONO_OUT_CTRL, 0xcc00 },
     { RT5631_SPK_MONO_HP_OUT_CTRL, 0x0000 },
-    { RT5631_SDP_CTRL, 0x0000 },
-    { RT5631_MONO_SDP_CTRL, 0x8000 },
-    { RT5631_STEREO_AD_DA_CLK_CTRL, 0x1010 },
-    { RT5631_PWR_MANAG_ADD1, 0x93e0 },
-    { RT5631_PWR_MANAG_ADD2, 0xf03e },
-    { RT5631_PWR_MANAG_ADD3, 0xe41e },
-    { RT5631_PWR_MANAG_ADD4, 0xec00 },
-    { RT5631_GEN_PUR_CTRL_REG, 0x3e08 },
-    { RT5631_GLOBAL_CLK_CTRL, 0x4000 },
-    { RT5631_PLL_CTRL, 0x3e2f },
-    { RT5631_INT_ST_IRQ_CTRL_1, 0x0000 },
-    { RT5631_INT_ST_IRQ_CTRL_2, 0x0718 },
-    { RT5631_GPIO_CTRL, 0x0000 },
-    { RT5631_MISC_CTRL, 0x2040 },
-    { RT5631_DEPOP_FUN_CTRL_1, 0xc003 },
-    { RT5631_DEPOP_FUN_CTRL_2, 0x8000 },
     { RT5631_JACK_DET_CTRL, 0x8bc0 },
-    { RT5631_SOFT_VOL_CTRL, 0x07e0 },
-    { RT5631_ALC_CTRL_1, 0x0206 },
-    { RT5631_ALC_CTRL_2, 0x0000 },
-    { RT5631_ALC_CTRL_3, 0x2000 },
-    { RT5631_PSEUDO_SPATL_CTRL, 0x0553 },
-    { RT5631_INDEX_ADD, 0x0056 },
-    { RT5631_INDEX_DATA, 0x302f },
-    { RT5631_EQ_CTRL, 0x0000 },
-    { RT5631_VENDOR_ID, 0x0003 },
-    { RT5631_VENDOR_ID1, 0x10ec },
-    { RT5631_VENDOR_ID2, 0x6132 },
 };
 #define RT5631_FIXED_REG_LEN ARRAY_SIZE(fix_reg)
 
@@ -391,6 +359,43 @@ static bool rt5631_readable_register(struct device *dev, unsigned int reg)
 		return 0;
 	}
 }
+
+/**
+ * rt5631_headset_detect - Detect headset.
+ * @codec: SoC audio codec device.
+ * @jack_insert: Jack insert or not.
+ *
+ * Detect whether is headset or not when jack inserted.
+ *
+ * Returns detect status.
+ */
+int rt5631_headset_detect(struct snd_soc_codec *codec, int jack_insert)
+{
+	int jack_type;
+
+	if(jack_insert) {
+		snd_soc_update_bits(codec, RT5631_PWR_MANAG_ADD2,
+			RT5631_PWR_MICBIAS1_VOL, RT5631_PWR_MICBIAS1_VOL);
+		snd_soc_update_bits(codec, RT5631_MIC_CTRL_2,
+			RT5631_MICBIAS1_S_C_DET_MASK |
+			RT5631_MICBIAS1_SHORT_CURR_DET_MASK,
+			RT5631_MICBIAS1_S_C_DET_ENA |
+			RT5631_MICBIAS1_SHORT_CURR_DET_600UA);
+		msleep(50);
+		if (rt5631_read_index(codec, 0x4a) & 0x2)
+			jack_type = RT5631_HEADPHO_DET;
+		else
+			jack_type = RT5631_HEADSET_DET;
+	} else {
+		snd_soc_update_bits(codec, RT5631_MIC_CTRL_2,
+			RT5631_MICBIAS1_S_C_DET_MASK,
+			RT5631_MICBIAS1_S_C_DET_DIS);
+		jack_type = RT5631_NO_JACK;
+	}
+
+	return jack_type;
+}
+EXPORT_SYMBOL(rt5631_headset_detect);
 
 static const DECLARE_TLV_DB_SCALE(out_vol_tlv, -4650, 150, 0);
 static const DECLARE_TLV_DB_SCALE(dac_vol_tlv, -95625, 375, 0);
@@ -2051,8 +2056,10 @@ static int rt5631_set_bias_level(struct snd_soc_codec *codec,
 			snd_soc_update_bits(codec, RT5631_PWR_MANAG_ADD3,
 				RT5631_PWR_FAST_VREF_CTRL,
 				RT5631_PWR_FAST_VREF_CTRL);
-			regcache_cache_only(rt5631->regmap, false);
-			regcache_sync(rt5631->regmap);
+			codec->cache_only = false;
+			codec->cache_sync = 1;
+			snd_soc_cache_sync(codec);
+			rt5631_index_sync(codec);
 		}
 		break;
 
@@ -2151,9 +2158,7 @@ static int rt5631_probe(struct snd_soc_codec *codec)
 	unsigned int val;
 	int ret;
 
-	codec->control_data = rt5631->regmap;
-
-	ret = snd_soc_codec_set_cache_io(codec, 8, 16, SND_SOC_REGMAP);
+	ret = snd_soc_codec_set_cache_io(codec, 8, 16, SND_SOC_I2C);
 	if (ret != 0) {
 		dev_err(codec->dev, "Failed to set cache I/O: %d\n", ret);
 		return ret;
@@ -2199,6 +2204,13 @@ static int rt5631_probe(struct snd_soc_codec *codec)
 	codec->dapm.bias_level = SND_SOC_BIAS_STANDBY;
 
 	rt5631->codec = codec;
+
+	snd_soc_add_codec_controls(codec, rt5631_snd_controls,
+			ARRAY_SIZE(rt5631_snd_controls));
+	snd_soc_dapm_new_controls(&codec->dapm, rt5631_dapm_widgets,
+			ARRAY_SIZE(rt5631_dapm_widgets));
+	snd_soc_dapm_add_routes(&codec->dapm, rt5631_dapm_routes,
+			ARRAY_SIZE(rt5631_dapm_routes));
 
 	ret = device_create_file(codec->dev, &dev_attr_codec_reg);
 	if (ret != 0) {
@@ -2294,13 +2306,18 @@ static struct snd_soc_codec_driver soc_codec_dev_rt5631 = {
 	.suspend = rt5631_suspend,
 	.resume = rt5631_resume,
 	.set_bias_level = rt5631_set_bias_level,
-    .set_pll = rt5631_codec_set_dai_pll, 
-	.controls = rt5631_snd_controls,
-	.num_controls = ARRAY_SIZE(rt5631_snd_controls),
-	.dapm_widgets = rt5631_dapm_widgets,
-	.num_dapm_widgets = ARRAY_SIZE(rt5631_dapm_widgets),
-	.dapm_routes = rt5631_dapm_routes,
-	.num_dapm_routes = ARRAY_SIZE(rt5631_dapm_routes),
+   	.reg_cache_size = RT5631_VENDOR_ID2 + 1,
+	.reg_word_size = sizeof(u16),
+	.reg_cache_default = rt5631_reg,
+	.volatile_register = rt5631_volatile_register,
+	.readable_register = rt5631_readable_register,
+	.reg_cache_step = 1,
+	//.controls = rt5631_snd_controls,
+	//.num_controls = ARRAY_SIZE(rt5631_snd_controls),
+	//.dapm_widgets = rt5631_dapm_widgets,
+	//.num_dapm_widgets = ARRAY_SIZE(rt5631_dapm_widgets),
+	//.dapm_routes = rt5631_dapm_routes,
+	//.num_dapm_routes = ARRAY_SIZE(rt5631_dapm_routes),
 };
 
 static const struct i2c_device_id rt5631_i2c_id[] = {
@@ -2310,22 +2327,10 @@ static const struct i2c_device_id rt5631_i2c_id[] = {
 MODULE_DEVICE_TABLE(i2c, rt5631_i2c_id);
 
 static struct of_device_id rt5631_i2c_dt_ids[] = {
-    { .compatible = "realtek,rt5631"},
+    { .compatible = "realtek,rt5631", },
  	{ }
 };
 MODULE_DEVICE_TABLE(of, rt5631_i2c_dt_ids);
-
-static const struct regmap_config rt5631_regmap_config = {
-	.reg_bits = 8,
-	.val_bits = 16,
-
-	.readable_reg = rt5631_readable_register,
-	.volatile_reg = rt5631_volatile_register,
-	.max_register = RT5631_VENDOR_ID2,
-	.reg_defaults = rt5631_reg,
-	.num_reg_defaults = ARRAY_SIZE(rt5631_reg),
-	.cache_type = REGCACHE_RBTREE,
-};
 
 static int rt5631_i2c_probe(struct i2c_client *i2c,
 		    const struct i2c_device_id *id)
@@ -2339,13 +2344,15 @@ static int rt5631_i2c_probe(struct i2c_client *i2c,
 		return -ENOMEM;
 
 	i2c_set_clientdata(i2c, rt5631);
-
-	rt5631->regmap = devm_regmap_init_i2c(i2c, &rt5631_regmap_config);
-	if (IS_ERR(rt5631->regmap))
-		return PTR_ERR(rt5631->regmap);
-
+	
 	ret = snd_soc_register_codec(&i2c->dev, &soc_codec_dev_rt5631,
 			rt5631_dai, ARRAY_SIZE(rt5631_dai));
+    if (ret < 0)
+        goto err;
+
+    return 0;
+
+err:
 	return ret;
 }
 
