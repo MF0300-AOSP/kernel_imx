@@ -160,11 +160,18 @@ static const struct reg_default rt5631_reg[] = {
 };
 
 static const struct reg_default fix_reg[] = {
+    { RT5631_ADC_CTRL_1, 0x000f },
+    { RT5631_ADC_REC_MIXER, 0xb0f0 },
     { RT5631_OUTMIXER_L_CTRL, 0xdfc0 },
     { RT5631_OUTMIXER_R_CTRL, 0xdfc0 },
+    { RT5631_AXO2MIXER_CTRL, 0x4242 },
+    { RT5631_MIC_CTRL_2, 0x4400 },
     { RT5631_SPK_MIXER_CTRL, 0xd8d8 },
     { RT5631_SPK_MONO_OUT_CTRL, 0xcc00 },
     { RT5631_SPK_MONO_HP_OUT_CTRL, 0x0000 },
+    { RT5631_STEREO_AD_DA_CLK_CTRL, 0x1010 },
+    { RT5631_GEN_PUR_CTRL_REG, 0x3e08 },
+    { RT5631_GLOBAL_CLK_CTRL, 0x4000 },
     { RT5631_JACK_DET_CTRL, 0x8bc0 },
 };
 #define RT5631_FIXED_REG_LEN ARRAY_SIZE(fix_reg)
