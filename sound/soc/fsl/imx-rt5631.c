@@ -533,7 +533,7 @@ audmux_bypass:
     snd_soc_dapm_enable_pin(&priv->codec->dapm, "Line In Jack");
     snd_soc_dapm_sync(&priv->codec->dapm);
 
-    if (priv->hp_gpio != -1) {
+    if (gpio_is_valid(priv->hp_gpio)) {
 		priv->hp_irq = gpio_to_irq(priv->hp_gpio);
 
 		ret = request_irq(priv->hp_irq,
