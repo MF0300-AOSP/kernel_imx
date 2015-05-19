@@ -34,6 +34,8 @@
 
 static int wifi_power_gpio;
 static int wifi_host_wakeup_gpio;
+DEFINE_MUTEX(wifi_mutex);
+static bool wifi_gpio_state = false;
 
 #if defined(CONFIG_OF)
 static const struct of_device_id bcm_wifi_gpio_dt_ids[] = {
@@ -56,12 +58,16 @@ void wifi_power(int nSwitch)
 
 	// wifi and bt pins setting
 	printk("**%s:%d** set wifi gpio (%d)\n", __func__, __LINE__, nSwitch);
+	mutex_lock(&wifi_mutex);
 	gpio_set_value_cansleep(wifi_power_gpio, 0);
+	wifi_gpio_state = false;
 	mdelay(100); 
 	if (nSwitch) {
 		gpio_set_value_cansleep(wifi_power_gpio, 1);
+		wifi_gpio_state = true;
 		msleep(100);
 	}
+	mutex_unlock(&wifi_mutex);
 
 	gpio_free(wifi_power_gpio);
 }
@@ -75,8 +81,14 @@ EXPORT_SYMBOL(get_wifi_host_wakeup_gpio);
 
 int get_wifi_power_gpio(void)
 {
-	return wifi_power_gpio;
+	int state;
+	mutex_lock(&wifi_mutex);
+
+	state = (int)wifi_gpio_state;
+	mutex_unlock(&wifi_mutex);
+	return state;
 }
+
 EXPORT_SYMBOL(get_wifi_power_gpio);
 
 static int bcm_wifi_gpio_probe(struct platform_device *pdev)

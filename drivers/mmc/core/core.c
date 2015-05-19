@@ -2309,12 +2309,14 @@ static int mmc_rescan_try_freq(struct mmc_host *host, unsigned freq)
 		{	
         		while(count<100)
          		{
-             			if(gpio_get_value_cansleep(get_wifi_power_gpio()) == 1)
+             			if(get_wifi_power_gpio() == 1)
                  			break;
+
              			mdelay(100);
              			count++;
          		}
      		}
+
 	}
 
 	mmc_power_up(host);
