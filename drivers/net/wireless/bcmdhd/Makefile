@@ -32,16 +32,6 @@ DHDOFILES += bcmsdh.o bcmsdh_linux.o bcmsdh_sdmmc.o bcmsdh_sdmmc_linux.o \
 obj-$(CONFIG_BCMDHD) += bcmdhd.o
 bcmdhd-objs += $(DHDOFILES)
 
-DHDOFILES += dhd_gpio.o
-DHDCFLAGS += -DCUSTOMER_HW
-
-#ifeq ($(CONFIG_MACH_ODROID_4210),y)
-DHDOFILES += dhd_gpio.o
-#DHDCFLAGS += -Iarch/arm/plat-samsung/include
-DHDCFLAGS += -DCUSTOMER_HW -DDHD_OF_SUPPORT
-#DHDCFLAGS += -DBCMWAPI_WPI -DBCMWAPI_WAI
-#endif
-
 ifeq ($(CONFIG_BCMDHD_OOB),y)
 DHDCFLAGS += -DOOB_INTR_ONLY -DHW_OOB -DCUSTOMER_OOB
 ifeq ($(CONFIG_BCMDHD_DISABLE_WOWLAN),y)

@@ -35,6 +35,7 @@ enum cd_types {
  * @wp_type:	type of write_protect method (see wp_types enum above)
  * @cd_type:	type of card_detect method (see cd_types enum above)
  * @support_vsel:  indicate it supports 1.8v switching
+ * @keep_clock: disable clock gate off
  */
 
 struct esdhc_platform_data {
@@ -45,5 +46,6 @@ struct esdhc_platform_data {
 	int max_bus_width;
 	bool support_vsel;
 	unsigned int delay_line;
+	bool keep_clock;
 };
 #endif /* __ASM_ARCH_IMX_ESDHC_H */

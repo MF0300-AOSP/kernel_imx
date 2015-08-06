@@ -54,8 +54,7 @@ bool cfg_multichip = FALSE;
 bcmdhd_wifi_platdata_t *dhd_wifi_platdata = NULL;
 static int wifi_plat_dev_probe_ret = 0;
 static bool is_power_on = FALSE;
-#if !defined(CONFIG_DTS)
-#if defined(DHD_OF_SUPPORT)
+#ifdef DHD_OF_SUPPORT
 static bool dts_enabled = TRUE;
 extern struct resource dhd_wlan_resources;
 extern struct wifi_platform_data dhd_wlan_control;
@@ -64,7 +63,6 @@ static bool dts_enabled = FALSE;
 struct resource dhd_wlan_resources = {0};
 struct wifi_platform_data dhd_wlan_control = {0};
 #endif /* CONFIG_OF && !defined(CONFIG_ARCH_MSM) */
-#endif /* !defind(CONFIG_DTS) */
 
 static int dhd_wifi_platform_load(void);
 
@@ -390,15 +388,12 @@ static int wifi_ctrlfunc_register_drv(void)
 
 	dev1 = bus_find_device(&platform_bus_type, NULL, WIFI_PLAT_NAME, wifi_platdev_match);
 	dev2 = bus_find_device(&platform_bus_type, NULL, WIFI_PLAT_NAME2, wifi_platdev_match);
-
-#if !defined(CONFIG_DTS)
-	if (!dts_enabled) {
-		if (dev1 == NULL && dev2 == NULL) {
-			DHD_ERROR(("no wifi platform data, skip\n"));
-			return -ENXIO;
-		}
-	}
-#endif /* !defined(CONFIG_DTS) */
+        if (!dts_enabled) {
+                if (dev1 == NULL && dev2 == NULL) {
+                        DHD_ERROR(("no wifi platform data, skip\n"));
+                        return -ENXIO;
+                }
+        }
 
 	/* multi-chip support not enabled, build one adapter information for
 	 * DHD (either SDIO, USB or PCIe)
@@ -432,32 +427,17 @@ static int wifi_ctrlfunc_register_drv(void)
 		}
 	}
 
-#if !defined(CONFIG_DTS)
 	if (dts_enabled) {
-		adapter->wifi_plat_data = (void *)&dhd_wlan_control;
-#ifdef CUSTOMER_HW
-		bcm_wlan_set_plat_data();
-#ifdef CUSTOMER_OOB
-		adapter->irq_num = bcm_wlan_get_oob_irq();
-		adapter->intr_flags = bcm_wlan_get_oob_irq_flags();
-#endif
-#else
-		struct resource *resource;
-		resource = &dhd_wlan_resources;
-		adapter->irq_num = resource->start;
-		adapter->intr_flags = resource->flags & IRQF_TRIGGER_MASK;
-#endif
-		wifi_plat_dev_probe_ret = dhd_wifi_platform_load();
-	}
-#endif /* !defined(CONFIG_DTS) */
+                struct resource *resource;
+                adapter->wifi_plat_data = (void *)&dhd_wlan_control;
+                resource = &dhd_wlan_resources;
+                adapter->irq_num = resource->start;
+                adapter->intr_flags = resource->flags & IRQF_TRIGGER_MASK;
+                wifi_plat_dev_probe_ret = dhd_wifi_platform_load();
+        }
 
-
-#ifdef CONFIG_DTS
-	wifi_plat_dev_probe_ret = platform_driver_register(&wifi_platform_dev_driver);
-#endif /* CONFIG_DTS */
-
-	/* return probe function's return value if registeration succeeded */
-	return wifi_plat_dev_probe_ret;
+        /* return probe function's return value if registeration succeeded */
+        return wifi_plat_dev_probe_ret;
 }
 
 void wifi_ctrlfunc_unregister_drv(void)

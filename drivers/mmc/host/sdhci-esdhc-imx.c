@@ -995,6 +995,9 @@ sdhci_esdhc_imx_probe_dt(struct platform_device *pdev,
 	if (of_find_property(np, "supports-sdio", NULL))
 		host->mmc->restrict_caps |= RESTRICT_CARD_TYPE_SDIO;
 
+	if (of_get_property(np, "disable-clock_gate_off", NULL))
+		boarddata->keep_clock = 1;
+
 	return 0;
 }
 #else

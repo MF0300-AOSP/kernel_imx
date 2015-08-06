@@ -133,5 +133,5 @@ obj-$(CONFIG_FIC_PWR_MANAGER) += fic_pm.o
 obj-$(CONFIG_FIC_NO_S3) += no_s3.o
 obj-$(CONFIG_MX6_IR) += mx6_ir.o
 obj-$(CONFIG_MX6_RAMOOPS) += mx6_ramoops.o
-
+obj-$(CONFIG_BCM433x) += board-imx6-bcm433x.o
 obj-y += devices/

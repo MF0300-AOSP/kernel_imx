@@ -2300,24 +2300,6 @@ static int mmc_rescan_try_freq(struct mmc_host *host, unsigned freq)
 	pr_info("%s: %s: trying to init card at %u Hz\n",
 		mmc_hostname(host), __func__, host->f_init);
 #endif
-	if ((of_machine_is_compatible("fsl,imx6q-tf9300"))||
-        (of_machine_is_compatible("fsl,imx6q-mf0200"))||
-		(of_machine_is_compatible("fsl,imx6q-mf0300"))){
-
-		int count=0;
-		if (host->restrict_caps & RESTRICT_CARD_TYPE_SDIO)
-		{	
-        		while(count<100)
-         		{
-             			if(get_wifi_power_gpio() == 1)
-                 			break;
-
-             			mdelay(100);
-             			count++;
-         		}
-     		}
-
-	}
 
 	mmc_power_up(host);
 

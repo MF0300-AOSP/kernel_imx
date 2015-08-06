@@ -338,12 +338,12 @@
 	};
 
 
-	wireless_gpio {
-		compatible = "broadcom,bcm_wifi_gpio";
-		wifi-power-gpio = <&gpio3 18 0>;
-		wifi-host-wakeup-gpio = <&gpio3 16 0>;
-		status = "okay";
-	};
+	wifi_bcm4330 {
+                compatible = "android,bcmdhd_wlan";
+                wl_reg_on = <&gpio3 18 0>;
+                wl_host_wake = <&gpio3 16 0>;
+                status = "okay";
+        };
 
 	no_s3 {
 		compatible = "fic,no_s3";
@@ -653,13 +653,14 @@
 };
 
 &usdhc2 {
-        pinctrl-names = "default";
-        pinctrl-0 = <&pinctrl_usdhc2_2>;
-        bus-width = <4>;
-        non-removable;
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_usdhc2_2>;
+	bus-width = <4>;
+	non-removable;
 	keep-power-in-suspend;
 	supports-sdio;
-        status = "okay";
+	/* disable-clock_gate_off; */
+	status = "okay";
 };
 
 &usdhc3 {

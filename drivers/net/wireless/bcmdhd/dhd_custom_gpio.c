@@ -44,11 +44,6 @@ int __attribute__ ((weak)) wifi_get_fw_nv_path(char *fw, char *nv) { return 0;};
 
 #endif 
 
-#ifdef FIC_WIFI_POWER
-extern void wifi_power(int nSwitch);
-extern void wifi_reset_on();
-extern void wifi_reset_off();
-#endif /*FIC_WIFI_POWER*/
 
 #if defined(OOB_INTR_ONLY)
 
