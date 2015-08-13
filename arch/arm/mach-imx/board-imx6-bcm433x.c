@@ -16,13 +16,13 @@
 #include <linux/fcntl.h>
 #include <linux/fs.h>
 
-#define BCM_DBG printk 
+#define BCM_DBG printk
 
 #define WLAN_STATIC_SCAN_BUF0		5
 #define WLAN_STATIC_SCAN_BUF1		6
 #define WLAN_STATIC_DHD_INFO_BUF	7
 #define WLAN_SCAN_BUF_SIZE		(64 * 1024)
-#define PREALLOC_WLAN_SEC_NUM		8	
+#define PREALLOC_WLAN_SEC_NUM		8
 #define PREALLOC_WLAN_BUF_NUM		160
 #define PREALLOC_WLAN_SECTION_HEADER	24
 

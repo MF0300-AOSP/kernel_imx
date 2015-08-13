@@ -6,9 +6,9 @@ config BCMDHD
 
 config BCM433x
 	depends on BCMDHD
-	bool "BCM433x board platform device"
+	bool "BCM433x platform device support"
 	---help---
-	  board platform device register.
+	  platform device register.
 
 config BCMDHD_FW_PATH
 	depends on BCMDHD
