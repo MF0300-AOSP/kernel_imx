@@ -102,6 +102,14 @@ config IMX_THERMAL
 	  cpufreq is used as the cooling device to throttle CPUs when the
 	  passive trip is crossed.
 
+config TEMPERATURE_DIV_1000
+	prompt "Temperature divided by 1000"
+	depends on IMX_THERMAL
+	bool
+	default n
+	help
+	  Temperatre divided by 1000.
+
 config DEVICE_THERMAL
 	tristate "generic device cooling support"
 	help
