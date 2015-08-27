@@ -346,6 +346,14 @@ struct phy_device *get_phy_device(struct mii_bus *bus, int addr, bool is_c45)
 
 	dev = phy_device_create(bus, addr, phy_id, is_c45, &c45_ids);
 
+    if (of_machine_is_compatible("fsl,imx6q-mf0300")) {
+		phy_write(dev, 31, 0x0007);
+		phy_write(dev, 30, 0x002c);
+		phy_write(dev, 0x1c, 0x734);
+		phy_write(dev, 0x1a, 0x40);
+		phy_write(dev, 31, 0x0000);
+	}
+
 	return dev;
 }
 EXPORT_SYMBOL(get_phy_device);
