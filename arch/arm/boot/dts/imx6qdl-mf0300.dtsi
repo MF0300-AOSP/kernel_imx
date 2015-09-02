@@ -41,9 +41,9 @@
 		};
 
 		volume-up {
-			label = "Volume Up";
+			label = "Key F12 for update";
 			gpios = <&gpio5 8 1>;
-			linux,code = <115>; /* KEY_VOLUMEUP */
+			linux,code = <88>; /* KEY_VOLUMEUP */
 			gpio-key,wakeup;
 		};
 	};
