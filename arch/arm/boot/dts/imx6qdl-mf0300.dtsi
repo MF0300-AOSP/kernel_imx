@@ -310,16 +310,14 @@
 			retain-state-suspended;
 		};
 	};
-/*
-	gpio-switches {
+
+	gpio-switch {
  		compatible = "gpio-switch";
 
- 		cash-sens {
- 			label = "CASH_SENS";
- 			gpios = <&gpio4 27 0>;
-		};
+ 		label = "CASH_SENS";
+ 		gpios = <&gpio4 27 0>;
  	};
-*/
+
 	bt_rfkill {
 		compatible = "broadcom,bcm_bt_rfkill";
 		bt-power-gpios = <&gpio3 24 0>;
