@@ -75,7 +75,7 @@ static int pm_suspend_late(void)
 }
 
 #ifdef CONFIG_HAS_EARLYSUSPEND
-static void pm_earlysuspend_resume(struct early_suspend *h)
+static void pm_earlysuspend_on_power(void)
 {
 	int i;
 	int ret = 0;
@@ -87,7 +87,7 @@ static void pm_earlysuspend_resume(struct early_suspend *h)
 	return;
 }
 
-static void pm_earlysuspend_suspend(struct early_suspend *h)
+static void pm_earlysuspend_off_power(void)
 {
 	int i;
 	int ret = 0;
@@ -97,6 +97,16 @@ static void pm_earlysuspend_suspend(struct early_suspend *h)
 			ret = regulator_disable(pm_data.pm_earlysuspend_regulator[i]);
 	}  	
 	return;
+}
+
+static void pm_earlysuspend_resume(struct early_suspend *h)
+{
+	pm_earlysuspend_on_power();
+}
+
+static void pm_earlysuspend_suspend(struct early_suspend *h)
+{
+	pm_earlysuspend_off_power();
 }
 
 struct early_suspend fic_pm_earlysuspend = {
@@ -249,8 +259,10 @@ static void fic_pm_shutdown(struct platform_device *pdev)
 {
 	struct device *dev = &pdev->dev;
 
+#ifdef CONFIG_HAS_EARLYSUSPEND
+	pm_earlysuspend_off_power();
+#endif
 	pm_suspend_late();
-	mdelay(2000);
 	return;
 }
 
