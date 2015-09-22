@@ -12,10 +12,18 @@
  */
 
 #include "imx6q-mf0300.dts"
+/ {
+	sound {
+		compatible = "fsl,imx6q-mf0300-rt5631",
+			     "fsl,imx-audio-rt5631";
+		model = "rt5631-audio";
+		spk-channel-swap = <1>;		
+	};
+};
 
 &ldb {
 	status = "okay";
-
+	
 	lvds-channel@0 {
 		fsl,data-mapping = "spwg";
 		fsl,data-width = <18>;

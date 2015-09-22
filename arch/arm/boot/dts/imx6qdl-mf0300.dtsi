@@ -235,6 +235,7 @@
 		mux-ext-port = <3>;
 		clk-enable = <&gpio5 20 0>;
 		amp-spk-enable = <&gpio4 24 0>, <&gpio5 11 1>;
+		spk-channel-swap = <0>;		
 	};
 
 	sound-hdmi {

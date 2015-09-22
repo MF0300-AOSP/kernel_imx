@@ -60,7 +60,7 @@ static struct imx_priv card_priv;
 
 static int sample_rate = 44100;
 static unsigned int sample_format = SNDRV_PCM_FMTBIT_S16_LE;
-
+static unsigned int spk_swap = 0;
 static int hpjack_status_check(void)
 {
 	struct imx_priv *priv = &card_priv;
@@ -155,6 +155,10 @@ static int imx_hifi_hw_params(struct snd_pcm_substream *substream,
 				 channels == 1 ? 0xfffffffe : 0xfffffffc,
 				 2, 32);
 
+	if (spk_swap)
+		dai_format = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_IF |
+			SND_SOC_DAIFMT_CBM_CFM;
+	
 	/* set cpu DAI configuration */
 	ret = snd_soc_dai_set_fmt(cpu_dai, dai_format);
 	if (ret)
@@ -395,6 +399,13 @@ static int imx_rt5631_probe(struct platform_device *pdev)
 		dev_err(&pdev->dev, "mux-ext-port missing or invalid\n");
 		return ret;
 	}
+
+    ret = of_property_read_u32(np, "spk-channel-swap", &spk_swap);
+    if (ret) {
+		dev_err(&pdev->dev, "spk_swap missing or invalid\n");
+		return ret;
+	}
+
 	/*
 	 * The port numbering in the hardware manual starts at 1, while
 	 * the audmux API expects it starts at 0.
