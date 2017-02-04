@@ -150,6 +150,7 @@ struct ion_client {
  */
 struct ion_handle {
 	struct kref ref;
+	unsigned int user_ref_count;
 	struct ion_client *client;
 	struct ion_buffer *buffer;
 	struct rb_node node;
@@ -475,5 +476,8 @@ int ion_handle_put_wrap(struct ion_handle *handle);
 struct ion_handle *ion_handle_get_by_id_wrap(struct ion_client *client,
 					       int id);
 struct device *ion_device_get_by_client(struct ion_client *client);
+
+bool ion_handle_validate(struct ion_client *client,
+			 struct ion_handle *handle);
 
 #endif /* _ION_PRIV_H */
