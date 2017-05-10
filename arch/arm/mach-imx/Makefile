@@ -134,6 +134,9 @@ obj-$(CONFIG_MX6_RAMOOPS) += mx6_ramoops.o
 
 obj-$(CONFIG_SOC_VF610) += clk-vf610.o mach-vf610.o
 obj-$(CONFIG_MACH_IMX_BLUETOOTH_RFKILL) += mx6_bt_rfkill.o
+obj-$(CONFIG_FIC_PWR_MANAGER) += fic_pm.o
+# obj-$(CONFIG_FIC_NO_S3) += no_s3.o
+obj-$(CONFIG_MX6_RAMOOPS) += mx6_ramoops.o
 
 obj-$(CONFIG_SOC_LS1021A) += mach-ls1021a.o
 
