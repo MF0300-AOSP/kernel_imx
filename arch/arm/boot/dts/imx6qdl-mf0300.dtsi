@@ -193,22 +193,22 @@
 			enable-active-high;
 		};
 
-		reg_1p8v: 1p8v {
-			compatible = "regulator-fixed";
-			regulator-name = "1P8V";
-			regulator-min-microvolt = <1800000>;
-			regulator-max-microvolt = <1800000>;
-			gpio = <&gpio1 8 GPIO_ACTIVE_HIGH>;
-			enable-active-high;
-			regulator-boot-on;
-		};
-
 		reg_enet_pwr_en: enet_pwr_en {
 			compatible = "regulator-fixed";
 			regulator-name = "enet-pwr-en";
 			regulator-min-microvolt = <5000000>;
 			regulator-max-microvolt = <5000000>;
 			gpio = <&gpio1 27 GPIO_ACTIVE_HIGH>;
+			enable-active-high;
+			regulator-boot-on;
+		};
+
+		reg_1p8v: 1p8v {
+			compatible = "regulator-fixed";
+			regulator-name = "1P8V";
+			regulator-min-microvolt = <1800000>;
+			regulator-max-microvolt = <1800000>;
+			gpio = <&gpio1 8 GPIO_ACTIVE_HIGH>;
 			enable-active-high;
 			regulator-boot-on;
 		};
@@ -273,6 +273,72 @@
 		status = "okay";
 	};
 
+	gpio_poweroff {
+	        compatible = "gpio-poweroff";
+	        gpios = <&gpio2 4 1>;
+	};
+        leds {
+		compatible = "gpio-leds";
+
+		sp213-en {
+			label = "SP213_PWR_EN";
+			gpios = <&gpio4 5 0>;
+			linux,default-trigger = "sp213-en";
+                };
+
+                cash-drawer-gpio1 {
+			label = "CASH_DRAWER_GPIO1";
+			gpios = <&gpio4 26 0>;
+			linux,default-trigger = "cash-drawer-gpio1";
+			default-state = "on";
+			retain-state-suspended;
+                };
+
+                cash-drawer-gpio2 {
+			label = "CASH_DRAWER_GPIO2";
+			gpios = <&gpio4 25 0>;
+			linux,default-trigger = "cash-drawer-gpio2";
+			default-state = "on";
+			retain-state-suspended;
+                };
+
+                stadnby-led {
+			label = "STANDBY_LED";
+			gpios = <&gpio4 14 0>;
+			linux,default-trigger = "standby-led";
+			default-state = "on";
+			retain-state-suspended;
+                };
+
+                power-led {
+			label = "POWER_LED";
+			gpios = <&gpio4 15 0>;
+			linux,default-trigger = "power-led";
+			default-state = "on";
+			retain-state-suspended;
+                };
+
+                update-led {
+			label = "UPDATE_LED";
+			gpios = <&gpio1 6 0>;
+			linux,default-trigger = "update-led";
+			default-state = "on";
+			retain-state-suspended;
+                };
+	};
+
+	gpio-switch {
+		compatible = "gpio-switch";
+
+		label = "CASH_SENS";
+		gpios = <&gpio4 27 0>;
+	};
+
+	no_s3 {
+		compatible = "fic,no_s3";
+		status = "okay";
+	};
+
 	fic_pm {
 		compatible = "fic,fic_pm";
 		regulator-names = "PWR1", "PWR2", "PWR3", "PWR4", "PWR5",
@@ -294,6 +360,13 @@
 &audmux {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_audmux_2>;
+	status = "okay";
+};
+
+&fec {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_enet_4>;
+	phy-mode = "rgmii";
 	status = "okay";
 };
 
@@ -443,7 +516,6 @@
 			>;
 		};
 	};
-
 	uart5 {
 		pinctrl_uart5_2: uart5grp-2 {
 			fsl,pins = <
@@ -451,7 +523,6 @@
 			>;
 		};
 	};
-
 	uart2 {
 		pinctrl_uart2_3: uart2grp-3 { 
 			fsl,pins = <
@@ -631,13 +702,6 @@
 		fsl,weim-cs-timing = <0x00620081 0x00000001 0x1c022000
 				0x0000c000 0x1404a38e 0x00000000>;
 	};
-};
-
-&fec {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_enet_4>;
-	phy-mode = "rgmii";
-	status = "okay";
 };
 
 &caam_sm  {

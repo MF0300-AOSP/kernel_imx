@@ -41,17 +41,16 @@ MODULE_DEVICE_TABLE(of, no_s3_dt_ids);
 static int no_s3_probe(struct platform_device *pdev)
 {
 
-	android_wake_lock_init(&wakelock, WAKE_LOCK_SUSPEND,
-		       "no_s3");
-	android_wake_lock(&wakelock);
+	wake_lock_init(&wakelock, WAKE_LOCK_SUSPEND, "no_s3");
+	wake_lock(&wakelock);
 	printk(KERN_INFO "no_s3 driver success loaded\n");
 	return 0;
 }
 
 static int  no_s3_remove(struct platform_device *pdev)
 {
-	android_wake_unlock(&wakelock);
-	android_wake_lock_destroy(&wakelock);
+	wake_unlock(&wakelock);
+	wake_lock_destroy(&wakelock);
 	return 0;
 }
 

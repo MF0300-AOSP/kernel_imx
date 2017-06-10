@@ -26,10 +26,17 @@
 
 enum {
 	WAKE_LOCK_SUSPEND, /* Prevent suspend */
+	WAKE_LOCK_IDLE,    /* Prevent low power idle */
 	WAKE_LOCK_TYPE_COUNT
 };
 
 struct wake_lock {
+#ifdef CONFIG_ANDROID
+	struct list_head    link;
+	int                 flags;
+	const char         *name;
+	unsigned long       expires;
+#endif
 	struct wakeup_source ws;
 };
 
@@ -61,7 +68,19 @@ static inline void wake_unlock(struct wake_lock *lock)
 
 static inline int wake_lock_active(struct wake_lock *lock)
 {
+
 	return lock->ws.active;
 }
+
+#ifdef CONFIG_ANDROID
+void android_wake_lock_init(struct wake_lock *lock, int type, const char *name);
+void android_wake_lock_destroy(struct wake_lock *lock);
+void android_wake_lock(struct wake_lock *lock);
+void android_wake_lock_timeout(struct wake_lock *lock, long timeout);
+void android_wake_unlock(struct wake_lock *lock);
+int android_wake_lock_active(struct wake_lock *lock);
+long android_has_wake_lock(int type);
+#endif
+
 
 #endif
