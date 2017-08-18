@@ -23,8 +23,13 @@
 
 #include "imx-pcm.h"
 
+//#define PCM_DMA_DEBUG
+
 static bool filter(struct dma_chan *chan, void *param)
 {
+#ifdef PCM_DMA_DEBUG
+	printk(KERN_WARNING "imx-pcm-dma.c:------------%s was called\n", __func__);
+#endif
 	if (!imx_dma_is_general_purpose(chan))
 		return false;
 
@@ -69,6 +74,9 @@ static void imx_pcm_dma_complete(void *arg)
 static int imx_pcm_dma_prepare_slave_config(struct snd_pcm_substream *substream,
 	struct snd_pcm_hw_params *params, struct dma_slave_config *slave_config)
 {
+#ifdef PCM_DMA_DEBUG
+	printk(KERN_WARNING "imx-pcm-dma.c:------------%s was called\n", __func__);
+#endif
 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
 	struct snd_dmaengine_dai_dma_data *dma_data;
 	struct dmaengine_pcm_runtime_data *prtd = substream->runtime->private_data;
@@ -97,6 +105,9 @@ static const struct snd_dmaengine_pcm_config imx_dmaengine_pcm_config = {
 
 int imx_pcm_dma_init(struct platform_device *pdev, size_t size)
 {
+#ifdef PCM_DMA_DEBUG
+	printk(KERN_WARNING "imx-pcm-dma.c:------------%s was called\n", __func__);
+#endif
 	struct snd_dmaengine_pcm_config *config;
 	struct snd_pcm_hardware *pcm_hardware;
 
@@ -116,7 +127,7 @@ int imx_pcm_dma_init(struct platform_device *pdev, size_t size)
 
 	return devm_snd_dmaengine_pcm_register(&pdev->dev,
 		config,
-		SND_DMAENGINE_PCM_FLAG_COMPAT);
+		SND_DMAENGINE_PCM_FLAG_NO_RESIDUE);
 }
 EXPORT_SYMBOL_GPL(imx_pcm_dma_init);
 

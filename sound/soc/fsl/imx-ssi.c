@@ -61,6 +61,7 @@
 static int imx_ssi_set_dai_tdm_slot(struct snd_soc_dai *cpu_dai,
 	unsigned int tx_mask, unsigned int rx_mask, int slots, int slot_width)
 {
+	printk(KERN_WARNING "imx-ssi.c:------------%s was called\n", __func__);
 	struct imx_ssi *ssi = snd_soc_dai_get_drvdata(cpu_dai);
 	u32 sccr;
 
@@ -86,6 +87,7 @@ static int imx_ssi_set_dai_tdm_slot(struct snd_soc_dai *cpu_dai,
  */
 static int imx_ssi_set_dai_fmt(struct snd_soc_dai *cpu_dai, unsigned int fmt)
 {
+	printk(KERN_WARNING "imx-ssi.c:------------%s was called\n", __func__);
 	struct imx_ssi *ssi = snd_soc_dai_get_drvdata(cpu_dai);
 	u32 strcr = 0, scr;
 
@@ -164,6 +166,7 @@ static int imx_ssi_set_dai_fmt(struct snd_soc_dai *cpu_dai, unsigned int fmt)
 static int imx_ssi_set_dai_sysclk(struct snd_soc_dai *cpu_dai,
 				  int clk_id, unsigned int freq, int dir)
 {
+	printk(KERN_WARNING "imx-ssi.c:------------%s was called\n", __func__);
 	struct imx_ssi *ssi = snd_soc_dai_get_drvdata(cpu_dai);
 	u32 scr;
 
@@ -192,6 +195,7 @@ static int imx_ssi_set_dai_sysclk(struct snd_soc_dai *cpu_dai,
 static int imx_ssi_set_dai_clkdiv(struct snd_soc_dai *cpu_dai,
 				  int div_id, int div)
 {
+	printk(KERN_WARNING "imx-ssi.c:------------%s was called\n", __func__);
 	struct imx_ssi *ssi = snd_soc_dai_get_drvdata(cpu_dai);
 	u32 stccr, srccr;
 
@@ -241,6 +245,7 @@ static int imx_ssi_hw_params(struct snd_pcm_substream *substream,
 			     struct snd_pcm_hw_params *params,
 			     struct snd_soc_dai *cpu_dai)
 {
+	printk(KERN_WARNING "imx-ssi.c:------------%s was called\n", __func__);
 	struct imx_ssi *ssi = snd_soc_dai_get_drvdata(cpu_dai);
 	u32 reg, sccr;
 
@@ -276,6 +281,7 @@ static int imx_ssi_hw_params(struct snd_pcm_substream *substream,
 static int imx_ssi_trigger(struct snd_pcm_substream *substream, int cmd,
 		struct snd_soc_dai *dai)
 {
+	printk(KERN_WARNING "imx-ssi.c:------------%s was called\n", __func__);
 	struct imx_ssi *ssi = snd_soc_dai_get_drvdata(dai);
 	unsigned int sier_bits, sier;
 	unsigned int scr;
@@ -346,6 +352,7 @@ static const struct snd_soc_dai_ops imx_ssi_pcm_dai_ops = {
 
 static int imx_ssi_dai_probe(struct snd_soc_dai *dai)
 {
+	printk(KERN_WARNING "imx-ssi.c:------------%s was called\n", __func__);
 	struct imx_ssi *ssi = dev_get_drvdata(dai->dev);
 	uint32_t val;
 
@@ -405,6 +412,7 @@ static const struct snd_soc_component_driver imx_component = {
 
 static void setup_channel_to_ac97(struct imx_ssi *imx_ssi)
 {
+	printk(KERN_WARNING "imx-ssi.c:------------%s was called\n", __func__);
 	void __iomem *base = imx_ssi->base;
 
 	writel(0x0, base + SSI_SCR);
@@ -438,6 +446,7 @@ static struct imx_ssi *ac97_ssi;
 static void imx_ssi_ac97_write(struct snd_ac97 *ac97, unsigned short reg,
 		unsigned short val)
 {
+	printk(KERN_WARNING "imx-ssi.c:------------%s was called\n", __func__);
 	struct imx_ssi *imx_ssi = ac97_ssi;
 	void __iomem *base = imx_ssi->base;
 	unsigned int lreg;
@@ -461,6 +470,7 @@ static void imx_ssi_ac97_write(struct snd_ac97 *ac97, unsigned short reg,
 static unsigned short imx_ssi_ac97_read(struct snd_ac97 *ac97,
 		unsigned short reg)
 {
+	printk(KERN_WARNING "imx-ssi.c:------------%s was called\n", __func__);
 	struct imx_ssi *imx_ssi = ac97_ssi;
 	void __iomem *base = imx_ssi->base;
 
@@ -482,6 +492,7 @@ static unsigned short imx_ssi_ac97_read(struct snd_ac97 *ac97,
 
 static void imx_ssi_ac97_reset(struct snd_ac97 *ac97)
 {
+	printk(KERN_WARNING "imx-ssi.c:------------%s was called\n", __func__);
 	struct imx_ssi *imx_ssi = ac97_ssi;
 
 	if (imx_ssi->ac97_reset)
@@ -492,6 +503,7 @@ static void imx_ssi_ac97_reset(struct snd_ac97 *ac97)
 
 static void imx_ssi_ac97_warm_reset(struct snd_ac97 *ac97)
 {
+	printk(KERN_WARNING "imx-ssi.c:------------%s was called\n", __func__);
 	struct imx_ssi *imx_ssi = ac97_ssi;
 
 	if (imx_ssi->ac97_warm_reset)
@@ -510,6 +522,7 @@ static struct snd_ac97_bus_ops imx_ssi_ac97_ops = {
 
 static int imx_ssi_probe(struct platform_device *pdev)
 {
+	printk(KERN_WARNING "imx-ssi.c:------------%s was called\n", __func__);
 	struct resource *res;
 	struct imx_ssi *ssi;
 	struct imx_ssi_platform_data *pdata = pdev->dev.platform_data;
@@ -603,7 +616,11 @@ static int imx_ssi_probe(struct platform_device *pdev)
 	ssi->fiq_params.dma_params_tx = &ssi->dma_params_tx;
 
 	ssi->fiq_init = imx_pcm_fiq_init(pdev, &ssi->fiq_params);
-	ssi->dma_init = imx_pcm_dma_init(pdev, IMX_SSI_DMABUF_SIZE);
+//	ssi->dma_init = imx_pcm_dma_init(pdev, IMX_SSI_DMABUF_SIZE);
+        ssi->dma_init = imx_pcm_dma_init(pdev, SND_DMAENGINE_PCM_FLAG_NO_RESIDUE |
+                                     SND_DMAENGINE_PCM_FLAG_NO_DT |
+                                     SND_DMAENGINE_PCM_FLAG_COMPAT,
+                                     IMX_SSI_DMABUF_SIZE);
 
 	if (ssi->fiq_init && ssi->dma_init) {
 		ret = ssi->fiq_init;
@@ -624,6 +641,7 @@ failed_clk:
 
 static int imx_ssi_remove(struct platform_device *pdev)
 {
+	printk(KERN_WARNING "imx-ssi.c:------------%s was called\n", __func__);
 	struct imx_ssi *ssi = platform_get_drvdata(pdev);
 
 	if (!ssi->fiq_init)
