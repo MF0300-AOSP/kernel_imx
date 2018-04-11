@@ -1645,6 +1645,8 @@ CONFIG_BRIDGE=y
 CONFIG_IP6_NF_SECURITY=y
 CONFIG_IP6_NF_NAT=y
 CONFIG_NETFILTER_XT_NAT=y
+# enable sdcard support
+CONFIG_MMC_USHC=y
 #
 # Enable WiMAX (Networking options) to see the WiMAX drivers
 #
