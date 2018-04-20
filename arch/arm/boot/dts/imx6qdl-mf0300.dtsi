@@ -277,6 +277,7 @@
 	};
         leds {
 		compatible = "gpio-leds";
+		status = "okay";
 
 		sp213-en {
 			label = "SP213_PWR_EN";

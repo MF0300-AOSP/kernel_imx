@@ -455,6 +455,7 @@ static unsigned int cp210x_quantise_baudrate(unsigned int baud)
 static int cp210x_open(struct tty_struct *tty, struct usb_serial_port *port)
 {
 	int result;
+        pr_debug("cp210x_open was called\n");
 
 	result = cp210x_set_config_single(port, CP210X_IFC_ENABLE,
 								UART_ENABLE);
@@ -475,7 +476,11 @@ static int cp210x_open(struct tty_struct *tty, struct usb_serial_port *port)
 
 static void cp210x_close(struct usb_serial_port *port)
 {
+        unsigned int baud;
+        pr_debug("cp210x_close was called\n");
 	usb_serial_generic_close(port);
+        cp210x_get_config(port, CP210X_GET_BAUDRATE, &baud, 4);
+        msleep(1200*2400/baud);
 	cp210x_set_config_single(port, CP210X_IFC_ENABLE, UART_DISABLE);
 }
 

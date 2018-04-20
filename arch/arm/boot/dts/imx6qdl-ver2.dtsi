@@ -45,6 +45,7 @@
 		interrupt-controller;
 		reg = <0x00a01000 0x1000>,
 		      <0x00a00100 0x100>;
+		interrupt-parent = <&intc>;
 	};
 
 	clocks {
@@ -331,23 +332,22 @@
 				};
 			};
 
-                        vpu: vpu@02040000 {
-                                compatible = "fsl,imx6-vpu";
-                                reg = <0x02040000 0x3c000>;
-                                reg-names = "vpu_regs";
-                                interrupts = <0 3 IRQ_TYPE_EDGE_RISING>,
-                                             <0 12 IRQ_TYPE_LEVEL_HIGH>;
-                                interrupt-names = "vpu_jpu_irq", "vpu_ipi_irq";
-                                clocks = <&clks IMX6QDL_CLK_VPU_AXI>,
-                                         <&clks IMX6QDL_CLK_MMDC_CH0_AXI>,
-                                         <&clks IMX6QDL_CLK_OCRAM>;
-                                clock-names = "vpu_clk", "mmdc_ch0_axi", "ocram";
-                                iramsize = <0x21000>;
-                                iram = <&ocram>;
-                                resets = <&src 1>;
-                                power-domains = <&gpc 1>;
-				status = "disabled";
-                        };
+            vpu: vpu@02040000 {
+                compatible = "fsl,imx6-vpu";
+                reg = <0x02040000 0x3c000>;
+                reg-names = "vpu_regs";
+                interrupts = <0 3 IRQ_TYPE_EDGE_RISING>,
+                             <0 12 IRQ_TYPE_LEVEL_HIGH>;
+                interrupt-names = "vpu_jpu_irq", "vpu_ipi_irq";
+                clocks = <&clks IMX6QDL_CLK_VPU_AXI>,
+                         <&clks IMX6QDL_CLK_MMDC_CH0_AXI>,
+                         <&clks IMX6QDL_CLK_OCRAM>;
+                clock-names = "vpu_clk", "mmdc_ch0_axi", "ocram";
+                iramsize = <0x21000>;
+                iram = <&ocram>;
+                resets = <&src 1>;
+                power-domains = <&gpc 1>;
+            };
 
 			aipstz@0207c000 { /* AIPSTZ1 */
 				reg = <0x0207c000 0x4000>;
@@ -533,9 +533,10 @@
 					anatop-min-bit-val = <4>;
 					anatop-min-voltage = <800000>;
 					anatop-max-voltage = <1375000>;
+					anatop-enable-bit = <0>;
 				};
 
-				regulator-3p0@120 {
+				reg_3p0: regulator-3p0@120 {
 					compatible = "fsl,anatop-regulator";
 					regulator-name = "vdd3p0";
 					regulator-min-microvolt = <2800000>;
@@ -547,6 +548,7 @@
 					anatop-min-bit-val = <0>;
 					anatop-min-voltage = <2625000>;
 					anatop-max-voltage = <3400000>;
+					anatop-enable-bit = <0>;
 				};
 
 				regulator-2p5@130 {
@@ -561,6 +563,7 @@
 					anatop-min-bit-val = <0>;
 					anatop-min-voltage = <2000000>;
 					anatop-max-voltage = <2750000>;
+					anatop-enable-bit = <0>;
 				};
 
 				reg_arm: regulator-vddcore@140 {
@@ -586,6 +589,7 @@
 					regulator-name = "vddpu";
 					regulator-min-microvolt = <725000>;
 					regulator-max-microvolt = <1450000>;
+					regulator-enable-ramp-delay = <150>;
 					anatop-reg-offset = <0x140>;
 					anatop-vol-bit-shift = <9>;
 					anatop-vol-bit-width = <5>;
@@ -595,6 +599,7 @@
 					anatop-min-bit-val = <1>;
 					anatop-min-voltage = <725000>;
 					anatop-max-voltage = <1450000>;
+					regulator-allow-bypass;
 				};
 
 				reg_soc: regulator-vddsoc@140 {
@@ -612,6 +617,7 @@
 					anatop-min-bit-val = <1>;
 					anatop-min-voltage = <725000>;
 					anatop-max-voltage = <1450000>;
+					regulator-allow-bypass;
 				};
 			};
 
