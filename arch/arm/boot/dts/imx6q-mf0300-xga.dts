@@ -1,5 +1,5 @@
-
 /*
+ * Copyright 2018 Itransition, Inc.
  * Copyright 2012-2013 Freescale Semiconductor, Inc.
  * Copyright 2011 Linaro Ltd.
  *
@@ -11,28 +11,22 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-#include "imx6q-mf0300-wxga.dts"
-/ {
-	sound {
-		compatible = "fsl,imx6q-mf0300-rt5631",
-			     "fsl,imx-audio-rt5631";
-		model = "rt5631-audio";
-		spk-channel-swap = <1>;		
-	};
-};
+/dts-v1/;
+
+#include "imx6q-ver2.dtsi"
+#include "imx6qdl-mf0300.dtsi"
+#include "imx6q-mf0300-btwifi.dtsi"
 
 &ldb {
 	status = "okay";
-	
 	lvds-channel@0 {
-		fsl,data-mapping = "spwg";
-		fsl,data-width = <18>;
-		primary;
 		status = "okay";
-
 		display-timings {
-			native-mode = <&timing0>;
-			timing0: hsd100pxn1 {
+			native-mode = <&lvds0_timing_xga>;
+			/* first defined timing will be selected */
+			/* does not depend on 'native-mode' value */
+			/* because of of_display_timing.c bug */
+			lvds0_timing_xga: hsd100pxn1 {
 				clock-frequency = <65000000>;
 				hactive = <1024>;
 				vactive = <768>;
@@ -42,27 +36,7 @@
 				vfront-porch = <15>;
 				hsync-len = <50>;
 				vsync-len = <13>;
-			};
-		};
-	};
-
-	lvds-channel@1 {
-		fsl,data-mapping = "spwg";
-		fsl,data-width = <18>;
-		status = "okay";
-
-		display-timings {
-			native-mode = <&timing1>;
-			timing1: hsd100pxn1 {
-				clock-frequency = <65000000>;
-				hactive = <1024>;
-				vactive = <768>;
-				hback-porch = <100>;
-				hfront-porch = <100>;
-				vback-porch = <10>;
-				vfront-porch = <15>;
-				hsync-len = <50>;
-				vsync-len = <13>;
+				linux,phandle = <&lvds0_timing_xga>;
 			};
 		};
 	};

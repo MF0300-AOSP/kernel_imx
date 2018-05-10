@@ -1,4 +1,5 @@
 /*
+ * Copyright 2018 Itransition, Inc.
  * Copyright 2012 Freescale Semiconductor, Inc.
  * Copyright 2011 Linaro Ltd.
  *
@@ -16,37 +17,27 @@
 #include "imx6qdl-mf0300.dtsi"
 #include "imx6q-mf0300-btwifi.dtsi"
 
-/ {
-	model = "Freescale i.MX6 Quad SABRE Automotive Board (MF0300)";
-	compatible = "fsl,imx6q-mf0300", "fsl,imx6q";
-};
-
 &ldb {
+	status = "okay";
 	lvds-channel@0 {
-		crtc = "ipu2-di0";
+		status = "okay";
+		display-timings {
+			native-mode = <&lvds0_timing_wxga>;
+			/* first defined timing will be selected */
+			/* does not depend on 'native-mode' value */
+			/* because of of_display_timing.c bug */
+			lvds0_timing_wxga: g150xt03 {
+				clock-frequency = <69300000>;
+				hactive = <1366>;
+				vactive = <768>;
+				hback-porch = <10>;
+				hfront-porch = <48>;
+				vback-porch = <16>;
+				vfront-porch = <3>;
+				hsync-len = <32>;
+				vsync-len = <6>;
+				linux,phandle = <&lvds0_timing_wxga>;
+			};
+		};
 	};
-
-	lvds-channel@1 {
-		crtc = "ipu2-di1";
-	};
-};
-
-&mxcfb1 {
-	status = "okay";
-};
-
-&mxcfb2 {
-	status = "okay";
-};
-
-&mxcfb3 {
-	status = "okay";
-};
-
-&mxcfb4 {
-	status = "okay";
-};
-
-&sata {
-	status = "okay";
 };

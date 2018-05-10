@@ -12,6 +12,9 @@
 #include <dt-bindings/gpio/gpio.h>
 
 / {
+	model = "Freescale i.MX6 Quad SABRE Automotive Board (MF0300)";
+	compatible = "fsl,imx6q-mf0300", "fsl,imx6q";
+
 	aliases {
 		mxcfb0 = &mxcfb1;
 		mxcfb1 = &mxcfb2;
@@ -68,7 +71,7 @@
 		default_bpp = <16>;
 		int_clk = <0>;
 		late_init = <0>;
-		status = "disabled";
+		status = "okay";
 	};
 
 	mxcfb2: fb@1 {
@@ -79,7 +82,7 @@
 		default_bpp = <24>;
 		int_clk = <0>;
 		late_init = <0>;
-		status = "disabled";
+		status = "okay";
 	};
 
 	mxcfb3: fb@2 {
@@ -248,7 +251,7 @@
 		mux-ext-port = <3>;
 		clk-enable = <&gpio5 20 0>;
 		amp-spk-enable = <&gpio4 24 0>, <&gpio5 11 1>;
-		spk-channel-swap = <0>;		
+		spk-channel-swap = <1>;
 	};
 
 	sound-hdmi {
@@ -535,49 +538,11 @@
 };
 
 &ldb {
-	status = "okay";
-
 	lvds-channel@0 {
 		fsl,data-mapping = "spwg";
 		fsl,data-width = <18>;
+		crtc = "ipu2-di0";
 		primary;
-		status = "okay";
-
-		display-timings {
-			native-mode = <&timing0>;
-			timing0: hsd100pxn1 {
-				clock-frequency = <69300000>;
-				hactive = <1366>;
-				vactive = <768>;
-				hback-porch = <10>;
-				hfront-porch = <48>;
-				vback-porch = <16>;
-				vfront-porch = <3>;
-				hsync-len = <32>;
-				vsync-len = <6>;
-			};
-		};
-	};
-
-	lvds-channel@1 {
-		fsl,data-mapping = "spwg";
-		fsl,data-width = <18>;
-		status = "okay";
-
-		display-timings {
-			native-mode = <&timing1>;
-			timing1: hsd100pxn1 {
-				clock-frequency = <69300000>;
-				hactive = <1366>;
-				vactive = <768>;
-				hback-porch = <10>;
-				hfront-porch = <48>;
-				vback-porch = <16>;
-				vfront-porch = <3>;
-				hsync-len = <32>;
-				vsync-len = <6>;
-			};
-		};
 	};
 };
 
