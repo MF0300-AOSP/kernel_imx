@@ -14,6 +14,7 @@
 
 #include "imx6q-ver2.dtsi"
 #include "imx6qdl-mf0300.dtsi"
+#include "imx6q-mf0300-btwifi.dtsi"
 
 / {
 	model = "Freescale i.MX6 Quad SABRE Automotive Board (MF0300)";

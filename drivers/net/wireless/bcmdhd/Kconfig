@@ -54,3 +54,29 @@ config DHD_USE_SCHED_SCAN
 	default n
 	---help---
 	  Use CFG80211 sched scan
+
+config BCM433x
+	depends on BCMDHD
+	bool "BCM433x platform device support"
+	---help---
+	  platform device register.
+
+config BCMDHD_CONFIG_PATH
+	depends on BCMDHD
+	string "Config path"
+	default "/system/etc/firmware/config.txt"
+	---help---
+	  Path to the driver configuration file.
+
+config BCMDHD_OOB
+	depends on BCMDHD
+	bool "Out-of-Band Interrupt"
+	default y
+	---help---
+	  Interrupt from WL_HOST_WAKE.
+
+config BCMDHD_SDIO_IRQ
+	depends on BCMDHD
+	bool "In-Band Interrupt"
+	---help---
+	  Interrupt from SDIO DAT[1]

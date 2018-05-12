@@ -35,4 +35,7 @@ hci_uart-$(CONFIG_BT_HCIUART_INTEL)	+= hci_intel.o
 hci_uart-$(CONFIG_BT_HCIUART_BCM)	+= hci_bcm.o
 hci_uart-objs				:= $(hci_uart-y)
 
+# mod 4.4
+hci_uart-$(CONFIG_BT_BLUESLEEP_IMX)	+= bluesleep_imx.o
+# mod 4.4 end
 ccflags-y += -D__CHECK_ENDIAN__

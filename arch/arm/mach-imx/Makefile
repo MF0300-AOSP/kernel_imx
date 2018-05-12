@@ -140,4 +140,9 @@ obj-$(CONFIG_MX6_RAMOOPS) += mx6_ramoops.o
 
 obj-$(CONFIG_SOC_LS1021A) += mach-ls1021a.o
 
+# mod from 4.4
+obj-$(CONFIG_BROADCOM_BLUETOOTH_RFKILL) += bcm_bt_rfkill.o
+obj-$(CONFIG_BROADCOM_WIFI_GPIO) += bcm_wifi_gpio.o
+obj-$(CONFIG_BCM433x) += board-imx6-bcm433x.o
+# mod from 4.4 end
 obj-y += devices/

@@ -1,0 +1,44 @@
+/*
+ * Copyright (C) 2018 Itransition Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+
+/*
+ * NOTE: This DTS file is written for plugging in Ampack GB86302I (Broadcom BCM4330)
+ * Wi-Fi/BT EVK into SD1 slot using & connecting Bluetooth UART.
+ * This configuration supports both WLAN and Bluetooth.
+ * WL_REG_ON/BT_REG_ON/WL_HOST_WAKE are connected.
+ */
+
+/ {
+	wifi_bcm4330 {
+		compatible = "android,bcmdhd_wlan";
+		wl_reg_on = <&gpio3 18 0>;
+		wl_host_wake = <&gpio3 16 0>;
+		gpios = <&gpio3 18 0>;
+		interrupt-names = "bcmdhd_wlan_irq";
+		interrupt-parent = <&gpio3>;
+		interrupts = <18 0>;
+		status = "okay";
+	};
+
+	bt_rfkill {
+		compatible = "broadcom,bcm_bt_rfkill";
+		bt-power-gpios = <&gpio3 24 0>;
+		bt-reset-gpios = <&gpio3 25 0>;
+		status = "okay";
+	};
+
+	bluesleep {
+		compatible = "imx,bcm4339_bluesleep";
+		host-wake-gpio = <&gpio3 30 0>;
+		ext-wake-gpio = <&gpio3 23 0>;
+		interrupt-parent = <&gpio3>;
+		interrupts = <30 0>;
+		interrupt-names = "bt_host_wake";
+		status = "okay";
+	};
+};

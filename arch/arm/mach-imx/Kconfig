@@ -710,6 +710,30 @@ config FIC_NO_S3
         Say Y to get the stopping suspend support 
 endif
 
+comment "mod 4.4"
+
+config BROADCOM_BLUETOOTH_RFKILL
+	tristate "Broadcom Bluetooth rfkill interface support"
+	depends on RFKILL
+	default n
+	help
+	Say Y to get the standard rfkill interface of Bluetooth
+
+config BROADCOM_WIFI_GPIO
+	tristate "Broadcom WiFi GPIO interface support"
+        default n
+        help
+        Say Y to get the gpio interface of WiFi (BCM4330)
+
+config MX6_IR
+	bool "MX6 IR Support"
+	depends on PWM_IMX
+	default n
+	help
+	 This config is for MX6 IR support. Enable it if hardware supported.
+
+comment "mod 4.4 end"
+
 config MX6_RAMOOPS
 	bool "MX6 ramoops Support"
 	depends on PSTORE_RAM
