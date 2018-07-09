@@ -255,7 +255,7 @@
 		default_bpp = <16>;
 		int_clk = <0>;
 		late_init = <0>;
-		status = "disabled";
+		status = "okay";
 	};
 
 	mxcfb2: fb@1 {
@@ -266,7 +266,7 @@
 		default_bpp = <24>;
 		int_clk = <0>;
 		late_init = <0>;
-		status = "disabled";
+		status = "okay";
 	};
 
 	mxcfb3: fb@2 {
