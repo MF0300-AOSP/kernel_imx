@@ -54,6 +54,52 @@
 			label = "debug";
 			gpios = <&gpio5 15 GPIO_ACTIVE_HIGH>;
 		};
+
+		sp213-en {
+			label = "SP213_PWR_EN";
+			gpios = <&gpio4 5 GPIO_ACTIVE_HIGH>;
+			linux,default-trigger = "sp213-en";
+		};
+
+		cash-drawer-gpio1 {
+			label = "CASH_DRAWER_GPIO1";
+			gpios = <&gpio4 26 GPIO_ACTIVE_HIGH>;
+			linux,default-trigger = "cash-drawer-gpio1";
+			default-state = "on";
+			retain-state-suspended;
+		};
+
+		cash-drawer-gpio2 {
+			label = "CASH_DRAWER_GPIO2";
+			gpios = <&gpio4 25 GPIO_ACTIVE_HIGH>;
+			linux,default-trigger = "cash-drawer-gpio2";
+			default-state = "on";
+			retain-state-suspended;
+		};
+
+		stadnby-led {
+			label = "STANDBY_LED";
+			gpios = <&gpio4 14 GPIO_ACTIVE_HIGH>;
+			linux,default-trigger = "standby-led";
+			default-state = "on";
+			retain-state-suspended;
+		};
+
+		power-led {
+			label = "POWER_LED";
+			gpios = <&gpio4 15 GPIO_ACTIVE_HIGH>;
+			linux,default-trigger = "power-led";
+			default-state = "on";
+			retain-state-suspended;
+		};
+
+		update-led {
+			label = "UPDATE_LED";
+			gpios = <&gpio1 6 GPIO_ACTIVE_HIGH>;
+			linux,default-trigger = "update-led";
+			default-state = "on";
+			retain-state-suspended;
+		};
 	};
 
 	clocks {
@@ -742,6 +788,12 @@
 		pinctrl_gpio_leds: gpioledsgrp {
 			fsl,pins = <
 				MX6QDL_PAD_DISP0_DAT21__GPIO5_IO15	0x80000000
+				MX6QDL_PAD_GPIO_19__GPIO4_IO05	    0x80000000
+				MX6QDL_PAD_DISP0_DAT5__GPIO4_IO26   0x80000000
+				MX6QDL_PAD_DISP0_DAT4__GPIO4_IO25   0x80000000
+				MX6QDL_PAD_KEY_COL4__GPIO4_IO14	    0x80000000
+				MX6QDL_PAD_KEY_ROW4__GPIO4_IO15     0x80000000
+				MX6QDL_PAD_GPIO_6__GPIO1_IO06	    0x80000000
 			>;
 		};
 
