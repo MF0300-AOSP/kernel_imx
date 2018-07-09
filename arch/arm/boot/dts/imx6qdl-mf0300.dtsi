@@ -414,21 +414,6 @@
 	status = "okay";
 };
 
-&can1 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_flexcan1>;
-	pinctrl-assert-gpios = <&max7310_b 3 GPIO_ACTIVE_HIGH>; /* TX */
-	xceiver-supply = <&reg_can_stby>;
-	status = "disabled"; /* pin conflict with fec */
-};
-
-&can2 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_flexcan2>;
-	xceiver-supply = <&reg_can_stby>;
-	status = "okay";
-};
-
 &gpmi {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_gpmi_nand>;
@@ -761,20 +746,6 @@
 				MX6QDL_PAD_NANDF_CS3__ESAI_TX1      0x1b030
 				MX6QDL_PAD_ENET_MDIO__ESAI_RX_CLK   0x1b030
 				MX6QDL_PAD_GPIO_9__ESAI_RX_FS       0x1b030
-			>;
-		};
-
-		pinctrl_flexcan1: flexcan1grp {
-			fsl,pins = <
-				MX6QDL_PAD_KEY_ROW2__FLEXCAN1_RX        0x17059
-				MX6QDL_PAD_KEY_COL2__FLEXCAN1_TX	0x17059
-			>;
-		};
-
-		pinctrl_flexcan2: flexcan2grp {
-			fsl,pins = <
-				MX6QDL_PAD_KEY_COL4__FLEXCAN2_TX	0x17059
-				MX6QDL_PAD_KEY_ROW4__FLEXCAN2_RX	0x17059
 			>;
 		};
 
