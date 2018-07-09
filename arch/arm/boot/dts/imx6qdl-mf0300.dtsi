@@ -26,18 +26,6 @@
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_gpio_keys>;
 
-		home {
-			label = "Home";
-			gpios = <&gpio1 11 GPIO_ACTIVE_LOW>;
-			linux,code = <KEY_HOME>;
-		};
-
-		back {
-			label = "Back";
-			gpios = <&gpio1 12 GPIO_ACTIVE_LOW>;
-			linux,code = <KEY_BACK>;
-		};
-
 		/* Reconfig to power key in Android*/
 		power {
 			label = "Power Button";
@@ -50,12 +38,6 @@
 			label = "Volume Up";
 			gpios = <&gpio2 15 GPIO_ACTIVE_LOW>;
 			linux,code = <KEY_VOLUMEUP>;
-		};
-
-		volume-down {
-			label = "Volume Down";
-			gpios = <&gpio5 14 GPIO_ACTIVE_LOW>;
-			linux,code = <KEY_VOLUMEDOWN>;
 		};
 	};
 
@@ -752,11 +734,8 @@
 
 		pinctrl_gpio_keys: gpio_keysgrp {
 			fsl,pins = <
-				MX6QDL_PAD_SD2_CMD__GPIO1_IO11	0x1b0b0
-				MX6QDL_PAD_SD2_DAT3__GPIO1_IO12 0x1b0b0
 				MX6QDL_PAD_SD4_DAT4__GPIO2_IO12 0x1b0b0
 				MX6QDL_PAD_SD4_DAT7__GPIO2_IO15	0x1b0b0
-				MX6QDL_PAD_DISP0_DAT20__GPIO5_IO14 0x1b0b0
 			>;
 		};
 
