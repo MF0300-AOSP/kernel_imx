@@ -34,10 +34,10 @@
 			gpio-key,wakeup;
 		};
 
-		volume-up {
-			label = "Volume Up";
-			gpios = <&gpio2 15 GPIO_ACTIVE_LOW>;
-			linux,code = <KEY_VOLUMEUP>;
+		f12 {
+			label = "Key F12 for update";
+			gpios = <&gpio5 8 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_F12>;
 		};
 	};
 
@@ -735,7 +735,7 @@
 		pinctrl_gpio_keys: gpio_keysgrp {
 			fsl,pins = <
 				MX6QDL_PAD_EIM_LBA__GPIO2_IO27	   0x80000000
-				MX6QDL_PAD_SD4_DAT7__GPIO2_IO15	0x1b0b0
+				MX6QDL_PAD_DISP0_DAT14__GPIO5_IO08 0x80000000
 			>;
 		};
 
