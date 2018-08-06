@@ -437,17 +437,6 @@
 		reg = <0x50>;
 	};
 
-	codec: cs42888@48 {
-		compatible = "cirrus,cs42888";
-		reg = <0x48>;
-		clocks = <&codec_osc>;
-		clock-names = "mclk";
-		VA-supply = <&reg_audio>;
-		VD-supply = <&reg_audio>;
-		VLS-supply = <&reg_audio>;
-		VLC-supply = <&reg_audio>;
-        };
-
 	si4763: si4763@63 {
 		compatible = "si4761";
 		reg = <0x63>;
