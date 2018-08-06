@@ -222,14 +222,6 @@
 		};
 	};
 
-	hannstar_cabc {
-		compatible = "hannstar,cabc";
-
-		lvds_share {
-			gpios = <&max7310_a 0 GPIO_ACTIVE_HIGH>;
-		};
-	};
-
 	sound-hdmi {
 		compatible = "fsl,imx6q-audio-hdmi",
 			     "fsl,imx-audio-hdmi";
