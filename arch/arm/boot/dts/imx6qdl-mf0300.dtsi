@@ -279,14 +279,6 @@
 		status = "disabled";
 	};
 
-	clocks {
-		codec_osc: anaclk2 {
-			compatible = "fixed-clock";
-			#clock-cells = <0>;
-			clock-frequency = <24576000>;
-		};
-	};
-
 	sound-cs42888 {
 		compatible = "fsl,imx6-sabreauto-cs42888",
 				"fsl,imx-audio-cs42888";
