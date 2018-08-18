@@ -622,12 +622,6 @@
 			>;
 		};
 
-		pinctrl_spdif: spdifgrp {
-			fsl,pins = <
-				MX6QDL_PAD_KEY_COL3__SPDIF_IN 0x1b0b0
-			>;
-		};
-
 		pinctrl_uart4: uart4grp {
 			fsl,pins = <
 				MX6QDL_PAD_KEY_COL0__UART4_TX_DATA	0x1b0b1
@@ -819,16 +813,6 @@
 };
 
 &pcie {
-	status = "okay";
-};
-
-&spdif {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_spdif>;
-	assigned-clocks = <&clks IMX6QDL_CLK_SPDIF_SEL>,
-			  <&clks IMX6QDL_CLK_SPDIF_PODF>;
-	assigned-clock-parents = <&clks IMX6QDL_CLK_PLL3_PFD3_454M>;
-	assigned-clock-rates = <0>, <227368421>;
 	status = "okay";
 };
 
