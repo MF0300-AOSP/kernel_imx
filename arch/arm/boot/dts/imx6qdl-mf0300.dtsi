@@ -271,16 +271,6 @@
 		status = "disabled";
 	};
 
-	sound-fm {
-		compatible = "fsl,imx-audio-si476x",
-			   "fsl,imx-tuner-si476x";
-		model = "imx-radio-si4763";
-		ssi-controller = <&ssi2>;
-		fm-controller = <&si476x_codec>;
-		mux-int-port = <2>;
-		mux-ext-port = <5>;
-	};
-
 	sound-spdif {
 		compatible = "fsl,imx-audio-spdif",
 			   "fsl,imx-sabreauto-spdif";
