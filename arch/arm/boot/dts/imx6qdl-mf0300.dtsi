@@ -436,20 +436,6 @@
 		compatible = "fsl,imx6-hdmi-i2c";
 		reg = <0x50>;
 	};
-
-	si4763: si4763@63 {
-		compatible = "si4761";
-		reg = <0x63>;
-		va-supply = <&reg_si4763_va>;
-		vd-supply = <&reg_si4763_vd>;
-		vio1-supply = <&reg_si4763_vio1>;
-		vio2-supply = <&reg_si4763_vio2>;
-		revision-a10; /* set to default A10 compatible command set */
-
-		si476x_codec: si476x-codec {
-			compatible = "si476x-codec";
-		};
-	};
 };
 
 &i2c3 {
