@@ -288,6 +288,7 @@
 			100
 			>;
 		default-brightness-level = <94>;
+		enable-gpios = <&gpio7 12 0>;
 		status = "okay";
 	};
 
@@ -477,6 +478,7 @@
 				MX6QDL_PAD_SD3_RST__GPIO7_IO08 0x80000000
 				MX6QDL_PAD_CSI0_DATA_EN__GPIO5_IO20 0x17059
 				MX6QDL_PAD_GPIO_1__GPIO1_IO01 0x17059
+				MX6QDL_PAD_GPIO_17__GPIO7_IO12	   0x80000000
 			>;
 		};
 
