@@ -271,14 +271,6 @@
 		status = "disabled";
 	};
 
-	sound-spdif {
-		compatible = "fsl,imx-audio-spdif",
-			   "fsl,imx-sabreauto-spdif";
-		model = "imx-spdif";
-		spdif-controller = <&spdif>;
-		spdif-in;
-	};
-
 	backlight {
 		compatible = "pwm-backlight";
 		pwms = <&pwm3 0 50000>;
