@@ -559,36 +559,6 @@
 			>;
 		};
 
-		pinctrl_usdhc3_100mhz: usdhc3grp100mhz {
-			fsl,pins = <
-				MX6QDL_PAD_SD3_CMD__SD3_CMD		0x170b9
-				MX6QDL_PAD_SD3_CLK__SD3_CLK		0x100b9
-				MX6QDL_PAD_SD3_DAT0__SD3_DATA0		0x170b9
-				MX6QDL_PAD_SD3_DAT1__SD3_DATA1		0x170b9
-				MX6QDL_PAD_SD3_DAT2__SD3_DATA2		0x170b9
-				MX6QDL_PAD_SD3_DAT3__SD3_DATA3		0x170b9
-				MX6QDL_PAD_SD3_DAT4__SD3_DATA4		0x170b9
-				MX6QDL_PAD_SD3_DAT5__SD3_DATA5		0x170b9
-				MX6QDL_PAD_SD3_DAT6__SD3_DATA6		0x170b9
-				MX6QDL_PAD_SD3_DAT7__SD3_DATA7		0x170b9
-			>;
-		};
-
-		pinctrl_usdhc3_200mhz: usdhc3grp200mhz {
-			fsl,pins = <
-				MX6QDL_PAD_SD3_CMD__SD3_CMD		0x170f9
-				MX6QDL_PAD_SD3_CLK__SD3_CLK		0x100f9
-				MX6QDL_PAD_SD3_DAT0__SD3_DATA0		0x170f9
-				MX6QDL_PAD_SD3_DAT1__SD3_DATA1		0x170f9
-				MX6QDL_PAD_SD3_DAT2__SD3_DATA2		0x170f9
-				MX6QDL_PAD_SD3_DAT3__SD3_DATA3		0x170f9
-				MX6QDL_PAD_SD3_DAT4__SD3_DATA4		0x170f9
-				MX6QDL_PAD_SD3_DAT5__SD3_DATA5		0x170f9
-				MX6QDL_PAD_SD3_DAT6__SD3_DATA6		0x170f9
-				MX6QDL_PAD_SD3_DAT7__SD3_DATA7		0x170f9
-			>;
-		};
-
 		pinctrl_weim_cs0: weimcs0grp {
 			fsl,pins = <
 				MX6QDL_PAD_EIM_CS0__EIM_CS0_B		0xb0b1
@@ -757,10 +727,8 @@
 };
 
 &usdhc3 {
-	pinctrl-names = "default", "state_100mhz", "state_200mhz";
+	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_usdhc3>;
-	pinctrl-1 = <&pinctrl_usdhc3_100mhz>;
-	pinctrl-2 = <&pinctrl_usdhc3_200mhz>;
 	cd-gpios = <&gpio6 15 GPIO_ACTIVE_LOW>;
 	wp-gpios = <&gpio1 13 GPIO_ACTIVE_HIGH>;
 	/*
