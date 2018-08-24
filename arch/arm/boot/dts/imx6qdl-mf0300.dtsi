@@ -731,6 +731,7 @@
 	pinctrl-0 = <&pinctrl_usdhc3>;
 	cd-gpios = <&gpio6 15 GPIO_ACTIVE_LOW>;
 	wp-gpios = <&gpio1 13 GPIO_ACTIVE_HIGH>;
+	bus-width = <4>;
 	/*
 	 * Due to board issue, we can not use external regulator for card slot
 	 * by default since the card power is shared with card detect pullup.
