@@ -323,6 +323,11 @@
 		compatible = "fsl,mxc_v4l2_output";
 		status = "okay";
 	};
+
+	gpio_poweroff {
+		compatible = "gpio-poweroff";
+		gpios = <&gpio2 4 1>;
+	};
 };
 
 &audmux {
