@@ -114,6 +114,131 @@
 		compatible = "simple-bus";
 		#address-cells = <1>;
 		#size-cells = <0>;
+
+		reg_3p3v: 3p3v {
+			compatible = "regulator-fixed";
+			regulator-name = "3P3V";
+			regulator-min-microvolt = <3300000>;
+			regulator-max-microvolt = <3300000>;
+			regulator-always-on;
+		};
+
+		reg_usb_otg_pwr: usb_otg_pwr@2 {
+			compatible = "regulator-fixed";
+			reg = <2>;
+			regulator-name = "usb_otg_pwr";
+			regulator-min-microvolt = <5000000>;
+			regulator-max-microvolt = <5000000>;
+			gpio = <&gpio4 22 GPIO_ACTIVE_HIGH>;
+			enable-active-high;
+		};
+
+		reg_5v: 5v {
+			compatible = "regulator-fixed";
+			regulator-name = "5V";
+			regulator-min-microvolt = <5000000>;
+			regulator-max-microvolt = <5000000>;
+			gpio = <&gpio1 2 GPIO_ACTIVE_HIGH>;
+			enable-active-high;
+			regulator-boot-on;
+		};
+
+		reg_3g: 3g {
+			compatible = "regulator-fixed";
+			regulator-name = "3G";
+			regulator-min-microvolt = <5000000>;
+			regulator-max-microvolt = <5000000>;
+			gpio = <&gpio1 3 GPIO_ACTIVE_HIGH>;
+			enable-active-high;
+			regulator-boot-on;
+		};
+
+		reg_24v: 24v {
+			compatible = "regulator-fixed";
+			regulator-name = "24v";
+			regulator-min-microvolt = <5000000>;
+			regulator-max-microvolt = <5000000>;
+			gpio = <&gpio4 9 GPIO_ACTIVE_HIGH>;
+			regulator-boot-on;
+		};
+
+		reg_lvds_en: lvds_en {
+			compatible = "regulator-fixed";
+			regulator-name = "lvds-en";
+			regulator-min-microvolt = <5000000>;
+			regulator-max-microvolt = <5000000>;
+			gpio = <&gpio5 14 GPIO_ACTIVE_HIGH>;
+			enable-active-high;
+			regulator-boot-on;
+		};
+
+		reg_12v: 12v {
+			compatible = "regulator-fixed";
+			regulator-name = "12v";
+			regulator-min-microvolt = <5000000>;
+			regulator-max-microvolt = <5000000>;
+			gpio = <&gpio5 15 GPIO_ACTIVE_HIGH>;
+			enable-active-high;
+			regulator-boot-on;
+		};
+
+		reg_wifi_ldo_1v8: wifi_ldo_1v8 {
+			compatible = "regulator-fixed";
+			regulator-name = "wifi-ldo-1v8";
+			regulator-min-microvolt = <5000000>;
+			regulator-max-microvolt = <5000000>;
+			gpio = <&gpio5 17 GPIO_ACTIVE_HIGH>;
+			enable-active-high;
+			regulator-boot-on;
+		};
+
+		reg_edp_en: enp_en {
+			compatible = "regulator-fixed";
+			regulator-name = "edp-en";
+			regulator-min-microvolt = <5000000>;
+			regulator-max-microvolt = <5000000>;
+			gpio = <&gpio5 29 GPIO_ACTIVE_HIGH>;
+			enable-active-high;
+		};
+
+		reg_edp_pwr_en: edp_pwr_en {
+			compatible = "regulator-fixed";
+			regulator-name = "edp-pwr-en";
+			regulator-min-microvolt = <5000000>;
+			regulator-max-microvolt = <5000000>;
+			gpio = <&gpio5 30 GPIO_ACTIVE_HIGH>;
+			enable-active-high;
+		};
+
+		reg_enet_pwr_en: enet_pwr_en {
+			compatible = "regulator-fixed";
+			regulator-name = "enet-pwr-en";
+			regulator-min-microvolt = <5000000>;
+			regulator-max-microvolt = <5000000>;
+			gpio = <&gpio1 27 GPIO_ACTIVE_HIGH>;
+			enable-active-high;
+			regulator-boot-on;
+		};
+
+		reg_1p8v: 1p8v {
+			compatible = "regulator-fixed";
+			regulator-name = "1P8V";
+			regulator-min-microvolt = <1800000>;
+			regulator-max-microvolt = <1800000>;
+			gpio = <&gpio1 8 GPIO_ACTIVE_HIGH>;
+			enable-active-high;
+			regulator-boot-on;
+		};
+
+		reg_usb_flgoc: usb_flgoc {
+			compatible = "regulator-fixed";
+			regulator-name = "usb_flgoc";
+			regulator-min-microvolt = <5000000>;
+			regulator-max-microvolt = <5000000>;
+			gpio = <&gpio5 7 GPIO_ACTIVE_HIGH>;
+			enable-active-high;
+			regulator-boot-on;
+		};
 	};
 
 	sound-hdmi {
@@ -588,7 +713,7 @@
 };
 
 &usbotg {
-	vbus-supply = <&reg_usb_otg_vbus>;
+	vbus-supply = <&reg_usb_otg_pwr>;
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_usbotg>;
 	srp-disable;
