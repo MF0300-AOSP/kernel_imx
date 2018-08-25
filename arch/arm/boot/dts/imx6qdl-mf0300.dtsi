@@ -729,8 +729,8 @@
 &usdhc3 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_usdhc3>;
-	cd-gpios = <&gpio6 15 GPIO_ACTIVE_LOW>;
-	wp-gpios = <&gpio1 13 GPIO_ACTIVE_HIGH>;
+	cd-gpios = <&gpio2 6 GPIO_ACTIVE_LOW>;
+	wp-gpios = <&gpio2 7 GPIO_ACTIVE_HIGH>;
 	bus-width = <4>;
 	/*
 	 * Due to board issue, we can not use external regulator for card slot
