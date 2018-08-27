@@ -28,6 +28,7 @@
 #include <linux/platform_device.h>
 #include <linux/slab.h>
 #include <linux/workqueue.h>
+#include <linux/of_gpio.h>
 
 /**
  * @extcon_id:		The unique id of specific external connector.
@@ -67,6 +68,8 @@ static void gpio_extcon_work(struct work_struct *work)
 	if (data->gpio_active_low)
 		state = !state;
 
+	if(state)
+		state = 1;
 	extcon_set_state_sync(data->edev, data->extcon_id, state);
 }
 
@@ -84,8 +87,18 @@ static int gpio_extcon_init(struct device *dev, struct gpio_extcon_data *data)
 	struct gpio_extcon_pdata *pdata = dev_get_platdata(dev);
 	int ret;
 
-	ret = devm_gpio_request_one(dev, data->gpio, GPIOF_DIR_IN,
-				dev_name(dev));
+	if(pdata) {
+		ret = devm_gpio_request_one(dev, data->gpio, GPIOF_DIR_IN,
+					dev_name(dev));
+	}
+	else {
+		struct device_node *np = dev->of_node;
+		data->gpio = of_get_named_gpio(np, "gpios", 0);
+		if (!gpio_is_valid(data->gpio)) {
+			dev_err(dev, "no sensor pwdn pin available\n");
+			ret = -ENODEV;
+		}
+	}
 	if (ret < 0)
 		return ret;
 
@@ -144,7 +157,7 @@ static int gpio_extcon_probe(struct platform_device *pdev)
 	 * is attached or detached.
 	 */
 	ret = devm_request_any_context_irq(&pdev->dev, data->irq,
-					gpio_irq_handler, data->irq_flags,
+					gpio_irq_handler, (data->irq_flags | IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING),
 					pdev->name, data);
 	if (ret < 0)
 		return ret;
@@ -181,12 +194,18 @@ static int gpio_extcon_resume(struct device *dev)
 
 static SIMPLE_DEV_PM_OPS(gpio_extcon_pm_ops, NULL, gpio_extcon_resume);
 
+static const struct of_device_id of_gpio_extcon_match[] = {
+	{ .compatible = "gpio-extcon", },
+	{},
+};
+
 static struct platform_driver gpio_extcon_driver = {
 	.probe		= gpio_extcon_probe,
 	.remove		= gpio_extcon_remove,
 	.driver		= {
 		.name	= "extcon-gpio",
 		.pm	= &gpio_extcon_pm_ops,
+		.of_match_table = of_match_ptr(of_gpio_extcon_match),
 	},
 };
 
