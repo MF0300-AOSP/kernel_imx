@@ -328,6 +328,11 @@
 		compatible = "gpio-poweroff";
 		gpios = <&gpio2 4 1>;
 	};
+
+	cash-drawer-sensor {
+		compatible = "gpio-extcon";
+		gpios = <&gpio4 27 0>;
+	};
 };
 
 &audmux {
