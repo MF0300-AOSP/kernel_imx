@@ -444,6 +444,11 @@
 		compatible = "atmel,24c02";
 		reg = <0x50>;
 	};
+
+	rtc-pcf8563@51 {
+		compatible = "nxp,pcf8563";
+		reg = <0x51>;
+	};
 };
 
 &iomuxc {
