@@ -455,7 +455,7 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_hog>;
 
-	imx6qdl-sabreauto {
+	imx6qdl-mf0300 {
                 pinctrl_audmux: audmux {
                         fsl,pins = <
                                 MX6QDL_PAD_DISP0_DAT16__AUD5_TXC  0x130b0
