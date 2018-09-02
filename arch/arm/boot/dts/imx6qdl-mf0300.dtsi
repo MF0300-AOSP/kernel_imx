@@ -458,9 +458,10 @@
 	imx6qdl-mf0300 {
                 pinctrl_audmux: audmux {
                         fsl,pins = <
-                                MX6QDL_PAD_DISP0_DAT16__AUD5_TXC  0x130b0
-                                MX6QDL_PAD_DISP0_DAT18__AUD5_TXFS 0x130b0
-                                MX6QDL_PAD_DISP0_DAT19__AUD5_RXD  0x130b0
+                                MX6QDL_PAD_CSI0_DAT7__AUD3_RXD  0x130b0
+                                MX6QDL_PAD_CSI0_DAT4__AUD3_TXC  0x130b0
+                                MX6QDL_PAD_CSI0_DAT5__AUD3_TXD  0x110b0
+                                MX6QDL_PAD_CSI0_DAT6__AUD3_TXFS 0x130b0
                         >;
                 };
 
