@@ -14,6 +14,10 @@
 #include <dt-bindings/input/input.h>
 
 / {
+
+	model = "Freescale i.MX6 Quad SABRE Automotive Board (MF0300)";
+	compatible = "fsl,imx6q-mf0300", "fsl,imx6q";
+
 	aliases {
 		mxcfb0 = &mxcfb1;
 		mxcfb1 = &mxcfb2;
