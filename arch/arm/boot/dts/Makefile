@@ -405,6 +405,8 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
 	imx6q-hummingboard.dtb \
 	imx6q-icore-rqs.dtb \
 	imx6q-marsboard.dtb \
+	imx6q-mf0300-wxga.dtb \
+	imx6q-mf0300-xga.dtb \
 	imx6q-nitrogen6x.dtb \
 	imx6q-nitrogen6_max.dtb \
 	imx6q-novena.dtb \

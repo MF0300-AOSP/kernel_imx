@@ -1,0 +1,42 @@
+/*
+ * Copyright 2018 Itransition, Inc.
+ * Copyright 2012 Freescale Semiconductor, Inc.
+ * Copyright 2011 Linaro Ltd.
+ *
+ * The code contained herein is licensed under the GNU General Public
+ * License. You may obtain a copy of the GNU General Public License
+ * Version 2 or later at the following locations:
+ *
+ * http://www.opensource.org/licenses/gpl-license.html
+ * http://www.gnu.org/copyleft/gpl.html
+ */
+
+/dts-v1/;
+
+#include "imx6q.dtsi"
+#include "imx6qdl-mf0300.dtsi"
+
+&ldb {
+	status = "okay";
+	lvds-channel@0 {
+		status = "okay";
+		display-timings {
+			native-mode = <&lvds0_timing_wxga>;
+			/* first defined timing will be selected */
+			/* does not depend on 'native-mode' value */
+			/* because of of_display_timing.c bug */
+			lvds0_timing_wxga: b133xw03v1 {
+				clock-frequency = <69300000>;
+				hactive = <1366>;
+				vactive = <768>;
+				hback-porch = <10>;
+				hfront-porch = <48>;
+				vback-porch = <16>;
+				vfront-porch = <3>;
+				hsync-len = <32>;
+				vsync-len = <6>;
+				linux,phandle = <&lvds0_timing_wxga>;
+			};
+		};
+	};
+};
