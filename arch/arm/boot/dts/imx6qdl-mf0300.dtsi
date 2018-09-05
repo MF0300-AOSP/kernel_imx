@@ -718,44 +718,14 @@
 		fsl,data-width = <18>;
 		crtc = "ipu2-di0";
 		primary;
-		status = "okay";
-
-		display-timings {
-			native-mode = <&timing0>;
-			timing0: hsd100pxn1 {
-				clock-frequency = <65000000>;
-				hactive = <1024>;
-				vactive = <768>;
-				hback-porch = <220>;
-				hfront-porch = <40>;
-				vback-porch = <21>;
-				vfront-porch = <7>;
-				hsync-len = <60>;
-				vsync-len = <10>;
-			};
-		};
+		status = "disabled";
 	};
 
 	lvds-channel@1 {
 		fsl,data-mapping = "spwg";
 		fsl,data-width = <18>;
 		crtc = "ipu2-di1";
-		status = "okay";
-
-		display-timings {
-			native-mode = <&timing1>;
-			timing1: hsd100pxn1 {
-				clock-frequency = <65000000>;
-				hactive = <1024>;
-				vactive = <768>;
-				hback-porch = <220>;
-				hfront-porch = <40>;
-				vback-porch = <21>;
-				vfront-porch = <7>;
-				hsync-len = <60>;
-				vsync-len = <10>;
-			};
-		};
+		status = "disabled";
 	};
 };
 
