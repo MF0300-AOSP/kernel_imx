@@ -716,6 +716,7 @@
 	lvds-channel@0 {
 		fsl,data-mapping = "spwg";
 		fsl,data-width = <18>;
+		crtc = "ipu2-di0";
 		primary;
 		status = "okay";
 
@@ -738,6 +739,7 @@
 	lvds-channel@1 {
 		fsl,data-mapping = "spwg";
 		fsl,data-width = <18>;
+		crtc = "ipu2-di1";
 		status = "okay";
 
 		display-timings {
