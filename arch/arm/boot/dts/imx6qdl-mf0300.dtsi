@@ -33,7 +33,7 @@
 		/* Reconfig to power key in Android*/
 		power {
 			label = "Power Button";
-			gpios = <&gpio2 27 1>;
+			gpios = <&gpio2 27 GPIO_ACTIVE_HIGH>;
 			linux,code = <116>; /* KEY_POWER */
 			gpio-key,wakeup;
 		};
