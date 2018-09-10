@@ -98,6 +98,9 @@ static int gpio_extcon_init(struct device *dev, struct gpio_extcon_data *data)
 			dev_err(dev, "no sensor pwdn pin available\n");
 			ret = -ENODEV;
 		}
+		else{
+			ret = 0;
+		}
 	}
 	if (ret < 0)
 		return ret;
@@ -113,7 +116,6 @@ static int gpio_extcon_init(struct device *dev, struct gpio_extcon_data *data)
 			data->debounce_jiffies =
 				msecs_to_jiffies(data->debounce);
 	}
-
 	data->irq = gpiod_to_irq(data->id_gpiod);
 	if (data->irq < 0)
 		return data->irq;
@@ -131,8 +133,10 @@ static int gpio_extcon_probe(struct platform_device *pdev)
 				   GFP_KERNEL);
 	if (!data)
 		return -ENOMEM;
-	if (!data->irq_flags || data->extcon_id > EXTCON_NONE)
-		return -EINVAL;
+	if(pdata) {
+		if (!data->irq_flags || data->extcon_id > EXTCON_NONE)
+			return -EINVAL;
+	}
 
 	/* Initialize the gpio */
 	ret = gpio_extcon_init(&pdev->dev, data);
