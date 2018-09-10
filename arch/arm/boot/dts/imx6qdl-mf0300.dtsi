@@ -333,6 +333,13 @@
 		compatible = "gpio-extcon";
 		gpios = <&gpio4 27 0>;
 	};
+
+	bt_rfkill {
+		compatible = "broadcom,bcm_bt_rfkill";
+		bt-power-gpios = <&gpio3 24 0>;
+		bt-reset-gpios = <&gpio3 25 0>;
+		status = "okay";
+	};
 };
 
 &audmux {
