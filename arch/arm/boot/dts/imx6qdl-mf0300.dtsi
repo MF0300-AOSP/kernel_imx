@@ -340,6 +340,13 @@
 		bt-reset-gpios = <&gpio3 25 0>;
 		status = "okay";
 	};
+
+	bluesleep {
+		compatible = "imx,bcm4339_bluesleep";
+		host-wake-gpio = <&gpio3 30 0>;
+		ext-wake-gpio = <&gpio3 23 0>;
+		status = "okay";
+	};
 };
 
 &audmux {
