@@ -830,7 +830,7 @@ static int bluesleep_populate_pinfo(struct platform_device *pdev)
 	BT_DBG("host_wake_gpio: %d ext_wake_gpio: %d",
 			bsi->host_wake, bsi->ext_wake);
 
-	bsi->host_wake_irq = platform_get_irq_byname(pdev, "bt_host_wake");
+	bsi->host_wake_irq = gpio_to_irq(bsi->host_wake);
 	if (bsi->host_wake_irq < 0) {
 		BT_ERR("couldn't find host_wake irq\n");
 		ret = -ENODEV;
