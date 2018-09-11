@@ -307,7 +307,8 @@ static int bluesleep_outgoing_data(void)
 
     static int bluesleep_read_seq_lpm(struct seq_file *seq, void *offset)
     {
-            return seq_printf(seq, "unsupported to read\n");
+            seq_printf(seq, "unsupported to read\n");
+            return 0;
     }
 
 static int bluesleep_open_seq_lpm(struct inode *inode,
@@ -353,7 +354,8 @@ static int bluesleep_open_seq_lpm(struct inode *inode,
 
     static int bluesleep_read_seq_btwrite(struct seq_file *seq, void *offset)
     {
-            return seq_printf(seq, "unsupported to read\n");
+            seq_printf(seq, "unsupported to read\n");
+            return 0;
     }
 
 static int bluesleep_open_seq_btwrite(struct inode *inode,
@@ -571,11 +573,12 @@ static void bluesleep_stop(void)
  * @param count Not used.
  * @param eof Whether or not there is more data to be read.
  * @param data Not used.
- * @return The number of bytes written.
+ * @return 0
  */
 static int bluepower_read_seq_btwake(struct seq_file *seq, void *offset)
 {
-            return seq_printf(seq, "btwake:%u\n",test_bit(BT_EXT_WAKE, &flags));
+            seq_printf(seq, "btwake:%u\n",test_bit(BT_EXT_WAKE, &flags));
+            return 0;
 }
 
 static int bluepower_open_seq_btwake(struct inode *inode,
@@ -636,11 +639,12 @@ static int bluepower_write_seq_btwake(struct file *file, const char *buffer,
  * @param count Not used.
  * @param eof Whether or not there is more data to be read.
  * @param data Not used.
- * @return The number of bytes written.
+ * @return 0
  */
 static int bluepower_read_seq_hostwake(struct seq_file *seq, void *offset)
 {
-            return seq_printf(seq, "hostwake: %u\n", gpio_get_value(bsi->host_wake));
+            seq_printf(seq, "hostwake: %u\n", gpio_get_value(bsi->host_wake));
+            return 0;
 }
 
 
@@ -660,7 +664,7 @@ static int bluepower_open_seq_hostwake(struct inode *inode,
  * @param count Not used.
  * @param eof Whether or not there is more data to be read.
  * @param data Not used.
- * @return The number of bytes written.
+ * @return 0
  */
 static int bluesleep_read_seq_asleep(struct seq_file *seq, void *offset)
 {
@@ -668,7 +672,8 @@ static int bluesleep_read_seq_asleep(struct seq_file *seq, void *offset)
 
 	asleep = test_bit(BT_ASLEEP, &flags) ? 1 : 0;
 
-	return seq_printf(seq, "asleep: %u\n", asleep);
+	seq_printf(seq, "asleep: %u\n", asleep);
+	return 0;
 }
 
 static int bluesleep_open_seq_asleep(struct inode *inode,
@@ -687,14 +692,15 @@ static int bluesleep_open_seq_asleep(struct inode *inode,
  * @param count Not used.
  * @param eof Whether or not there is more data to be read.
  * @param data Not used.
- * @return The number of bytes written.
+ * @return 0
  */
 static int bluesleep_read_seq_proto(struct seq_file *seq, void *offset)
 {
 	unsigned int proto;
 
 	proto = test_bit(BT_PROTO, &flags) ? 1 : 0;
-	return seq_printf(seq, "proto: %u\n", proto);
+	seq_printf(seq, "proto: %u\n", proto);
+	return 0;
 }
 
 static int bluesleep_open_seq_proto(struct inode *inode,
@@ -908,11 +914,11 @@ static int bluesleep_populate_pinfo(struct platform_device *pdev)
 
             if (bsi->irq_polarity == POLARITY_LOW) {
                     ret = request_irq(bsi->host_wake_irq, bluesleep_hostwake_isr,
-                                    IRQF_DISABLED | IRQF_TRIGGER_FALLING,
+                                    IRQF_TRIGGER_FALLING,
                                     "bluetooth hostwake", NULL);
             } else {
                     ret = request_irq(bsi->host_wake_irq, bluesleep_hostwake_isr,
-                                    IRQF_DISABLED | IRQF_TRIGGER_RISING,
+                                    IRQF_TRIGGER_RISING,
                                     "bluetooth hostwake", NULL);
             }
             if (ret  < 0) {
