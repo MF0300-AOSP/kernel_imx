@@ -2388,6 +2388,39 @@ static void __exit imx_serial_exit(void)
 	uart_unregister_driver(&imx_reg);
 }
 
+/*
+ * Find UART device port using its port index value.
+ */
+struct uart_port *imx_uart_get_uart_port(int port_index)
+{
+	int i;
+	for (i = 0; i < UART_NR; i++) {
+		if ((imx_ports[i])&&(imx_ports[i]->port.line == port_index))
+			return &imx_ports[i]->port;
+	}
+	return NULL;
+}
+EXPORT_SYMBOL(imx_uart_get_uart_port);
+
+/* Switch off the clock of the uart controller. */
+void imx_uart_request_clock_off(struct uart_port *uport) { }
+EXPORT_SYMBOL(imx_uart_request_clock_off);
+
+/* Switch on the clock of the uart controller */
+void imx_uart_request_clock_on(struct uart_port *uport) { }
+EXPORT_SYMBOL(imx_uart_request_clock_on);
+
+/* Set the modem control signals state of uart controller. */
+void imx_uart_set_mctrl(struct uart_port *uport, unsigned int mctrl) { }
+EXPORT_SYMBOL(imx_uart_set_mctrl);
+
+/* Return the status of the transmit fifo whether empty or not.
+ * Return 0 if tx fifo is not empty.
+ * Return TIOCSER_TEMT if tx fifo is empty.
+ */
+int imx_uart_tx_empty(struct uart_port *uport) { return imx_tx_empty(uport); }
+EXPORT_SYMBOL(imx_uart_tx_empty);
+
 module_init(imx_serial_init);
 module_exit(imx_serial_exit);
 
