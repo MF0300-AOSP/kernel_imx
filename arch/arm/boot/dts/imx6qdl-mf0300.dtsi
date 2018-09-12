@@ -347,6 +347,14 @@
 		ext-wake-gpio = <&gpio3 23 0>;
 		status = "okay";
 	};
+
+	wifi_bcm4330 {
+		compatible = "android,bcmdhd_wlan";
+		wl_reg_on = <&gpio3 18 0>;
+		wl_host_wake = <&gpio3 16 0>;
+		gpios = <&gpio3 18 0>;
+		status = "okay";
+	};
 };
 
 &audmux {
