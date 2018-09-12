@@ -221,6 +221,7 @@ endif
 
 bcmdhd-objs := $(DHDOFILES)
 obj-$(DRIVER_TYPE)   += bcmdhd.o
+obj-$(CONFIG_BCM433x) += board-imx6-bcm433x.o
 
 all:
 	@echo "$(MAKE) --no-print-directory -C $(KDIR) SUBDIRS=$(CURDIR) modules"
