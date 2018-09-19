@@ -355,6 +355,11 @@
 		gpios = <&gpio3 18 0>;
 		status = "okay";
 	};
+
+	no_s3 {
+		compatible = "fic,no_s3";
+		status = "okay";
+	};
 };
 
 &audmux {
