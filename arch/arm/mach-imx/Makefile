@@ -132,6 +132,7 @@ obj-$(CONFIG_SOC_IMX53) += mach-imx53.o
 obj-$(CONFIG_SOC_VF610) += mach-vf610.o
 obj-$(CONFIG_MACH_IMX_BLUETOOTH_RFKILL) += mx6_bt_rfkill.o
 obj-$(CONFIG_BROADCOM_BLUETOOTH_RFKILL) += bcm_bt_rfkill.o
+obj-$(CONFIG_FIC_NO_S3) += no_s3.o
 
 obj-$(CONFIG_SOC_LS1021A) += mach-ls1021a.o
 

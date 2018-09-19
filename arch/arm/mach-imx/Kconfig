@@ -674,6 +674,12 @@ config BROADCOM_BLUETOOTH_RFKILL
 	help
 	  Say Y to get the standard rfkill interface of Bluetooth
 
+config FIC_NO_S3
+	tristate "FIC WakeLock to prevent suspend"
+	default n
+	help
+	  Say Y to get the stopping suspend support
+
 source "arch/arm/mach-imx/devices/Kconfig"
 
 endif
