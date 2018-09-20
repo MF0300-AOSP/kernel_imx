@@ -680,6 +680,12 @@ config FIC_NO_S3
 	help
 	  Say Y to get the stopping suspend support
 
+config FIC_PWR_MANAGER
+	tristate "FIC Fixed regulater for suspend support"
+	default n
+	help
+	  Say Y to get the fixed regulator for suspend support
+
 source "arch/arm/mach-imx/devices/Kconfig"
 
 endif
