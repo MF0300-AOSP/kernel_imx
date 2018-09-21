@@ -384,22 +384,6 @@
 	status = "okay";
 };
 
-&ecspi1 {
-	fsl,spi-num-chipselects = <1>;
-	cs-gpios = <&gpio3 19 0>;
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_ecspi1 &pinctrl_ecspi1_cs>;
-	status = "disabled"; /* pin conflict with WEIM NOR */
-
-	flash: m25p80@0 {
-		#address-cells = <1>;
-		#size-cells = <1>;
-		compatible = "st,m25p32", "jedec,spi-nor";
-		spi-max-frequency = <20000000>;
-		reg = <0>;
-	};
-};
-
 &fec {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_enet>;
@@ -476,20 +460,6 @@
 				MX6QDL_PAD_CSI0_DATA_EN__GPIO5_IO20 0x17059
 				MX6QDL_PAD_GPIO_1__GPIO1_IO01 0x17059
 				MX6QDL_PAD_GPIO_17__GPIO7_IO12	   0x80000000
-			>;
-		};
-
-		pinctrl_ecspi1: ecspi1grp {
-			fsl,pins = <
-				MX6QDL_PAD_EIM_D17__ECSPI1_MISO		0x100b1
-				MX6QDL_PAD_EIM_D18__ECSPI1_MOSI		0x100b1
-				MX6QDL_PAD_EIM_D16__ECSPI1_SCLK		0x100b1
-			>;
-		};
-
-		pinctrl_ecspi1_cs: ecspi1cs {
-			fsl,pins = <
-				MX6QDL_PAD_EIM_D19__GPIO3_IO19 0x80000000
 			>;
 		};
 
