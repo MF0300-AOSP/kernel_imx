@@ -415,6 +415,13 @@
 	status = "okay";
 };
 
+&i2c1 {
+	clock-frequency = <100000>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_i2c1>;
+	status = "okay";
+};
+
 &i2c2 {
 	clock-frequency = <100000>;
 	pinctrl-names = "default";
@@ -506,6 +513,13 @@
 				MX6QDL_PAD_KEY_COL4__GPIO4_IO14	    0x80000000
 				MX6QDL_PAD_KEY_ROW4__GPIO4_IO15     0x80000000
 				MX6QDL_PAD_GPIO_6__GPIO1_IO06	    0x80000000
+			>;
+		};
+
+		pinctrl_i2c1: i2c1grp {
+			fsl,pins = <
+				MX6QDL_PAD_CSI0_DAT8__I2C1_SDA 0x4001b8b1
+				MX6QDL_PAD_CSI0_DAT9__I2C1_SCL 0x4001b8b1
 			>;
 		};
 
