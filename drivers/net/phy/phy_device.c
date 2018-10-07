@@ -34,6 +34,7 @@
 #include <linux/io.h>
 #include <linux/uaccess.h>
 #include <linux/of.h>
+#include <linux/gpio.h>
 
 #include <asm/irq.h>
 
@@ -532,6 +533,7 @@ struct phy_device *get_phy_device(struct mii_bus *bus, int addr, bool is_c45)
 {
 	struct phy_c45_device_ids c45_ids = {0};
 	u32 phy_id = 0;
+	struct phy_device *dev = NULL;
 	int r;
 
 	r = get_phy_id(bus, addr, &phy_id, is_c45, &c45_ids);
@@ -542,7 +544,17 @@ struct phy_device *get_phy_device(struct mii_bus *bus, int addr, bool is_c45)
 	if ((phy_id & 0x1fffffff) == 0x1fffffff)
 		return ERR_PTR(-ENODEV);
 
-	return phy_device_create(bus, addr, phy_id, is_c45, &c45_ids);
+	dev = phy_device_create(bus, addr, phy_id, is_c45, &c45_ids);
+
+	if (of_machine_is_compatible("fsl,imx6q-mf0300")) {
+		phy_write(dev, 31, 0x0007);
+		phy_write(dev, 30, 0x002c);
+		phy_write(dev, 0x1c, 0x734);
+		phy_write(dev, 0x1a, 0x40);
+		phy_write(dev, 31, 0x0000);
+	}
+
+	return dev;
 }
 EXPORT_SYMBOL(get_phy_device);
 
