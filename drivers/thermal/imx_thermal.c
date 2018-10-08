@@ -370,6 +370,9 @@ static int imx_get_temp(struct thermal_zone_device *tz, int *temp)
 		data->irq_enabled = true;
 		enable_irq(data->irq);
 	}
+#ifdef CONFIG_TEMPERATURE_DIV_1000
+	*temp /= 1000;
+#endif
 	mutex_unlock(&data->mutex);
 
 	return 0;
