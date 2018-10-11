@@ -176,7 +176,7 @@ endif
 # y: enable
 # n: disable
 ##########################
-DHDTXGLOM ?= n
+DHDTXGLOM ?= y
 ifeq ($(DHDTXGLOM), y)
   MAX_TXGLOM ?= 32
   DHDCFLAGS += -DCUSTOM_GLOM_SETTING=8 -DCUSTOM_RXCHAIN=1
