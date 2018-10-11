@@ -292,8 +292,8 @@ CONFIG_USB_USBNET=y
 CONFIG_USB_NET_CDC_EEM=y
 CONFIG_BCMDHD=y
 CONFIG_BCMDHD_SDIO=y
-CONFIG_BCMDHD_FW_PATH="/system/etc/firmware/bcm/fw_bcmdhd.bin"
-CONFIG_BCMDHD_NVRAM_PATH="/system/etc/firmware/bcm/bcmdhd.cal"
+CONFIG_BCMDHD_FW_PATH="/vendor/firmware/bcm/GB86302I_BCM4330/fw_bcm4330b2_ag.bin"
+CONFIG_BCMDHD_NVRAM_PATH="/vendor/firmware/bcm/GB86302I_BCM4330/bcmdhd.GB86302I.BCM4330.cal"
 CONFIG_BRCMFMAC=m
 # CONFIG_RTL_CARDS is not set
 # CONFIG_INPUT_MOUSEDEV_PSAUX is not set
