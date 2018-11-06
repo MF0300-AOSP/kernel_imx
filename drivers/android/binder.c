@@ -632,8 +632,16 @@ static struct binder_buffer *binder_buffer_lookup(struct binder_proc *proc,
 			n = n->rb_left;
 		else if (kern_ptr > buffer)
 			n = n->rb_right;
-		else
+		else {
+			/*
+			 * Guard against user threads attempting to
+			 * free the buffer when in use by kernel or
+			 * after it's already been freed.
+			 */
+			if (!buffer->allow_user_free)
+				return ERR_PTR(-EPERM);
 			return buffer;
+		}
 	}
 	return NULL;
 }
@@ -851,6 +859,7 @@ static struct binder_buffer *binder_alloc_buf(struct binder_proc *proc,
 		new_buffer->free = 1;
 		binder_insert_free_buffer(proc, new_buffer);
 	}
+	buffer->allow_user_free = 0;
 	binder_debug(BINDER_DEBUG_BUFFER_ALLOC,
 		     "%d: binder_alloc_buf size %zd got %p\n",
 		      proc->pid, size, buffer);
@@ -2109,7 +2118,6 @@ static void binder_transaction(struct binder_proc *proc,
 		return_error = BR_FAILED_REPLY;
 		goto err_binder_alloc_buf_failed;
 	}
-	t->buffer->allow_user_free = 0;
 	t->buffer->debug_id = t->debug_id;
 	t->buffer->transaction = t;
 	t->buffer->target_node = target_node;
@@ -2491,14 +2499,18 @@ static int binder_thread_write(struct binder_proc *proc,
 			ptr += sizeof(binder_uintptr_t);
 
 			buffer = binder_buffer_lookup(proc, data_ptr);
-			if (buffer == NULL) {
-				binder_user_error("%d:%d BC_FREE_BUFFER u%016llx no match\n",
-					proc->pid, thread->pid, (u64)data_ptr);
-				break;
-			}
-			if (!buffer->allow_user_free) {
-				binder_user_error("%d:%d BC_FREE_BUFFER u%016llx matched unreturned buffer\n",
-					proc->pid, thread->pid, (u64)data_ptr);
+			if (IS_ERR_OR_NULL(buffer)) {
+				if (PTR_ERR(buffer) == -EPERM) {
+					binder_user_error(
+						"%d:%d BC_FREE_BUFFER u%016llx matched unreturned or currently freeing buffer\n",
+						proc->pid, thread->pid,
+						(u64)data_ptr);
+				} else {
+					binder_user_error(
+						"%d:%d BC_FREE_BUFFER u%016llx no match\n",
+						proc->pid, thread->pid,
+						(u64)data_ptr);
+				}
 				break;
 			}
 			binder_debug(BINDER_DEBUG_FREE_BUFFER,
