@@ -247,6 +247,7 @@ static void __init imx6q_csi_mux_init(void)
 	gpr = syscon_regmap_lookup_by_compatible("fsl,imx6q-iomuxc-gpr");
 	if (!IS_ERR(gpr)) {
 		if (of_machine_is_compatible("fsl,imx6q-sabresd") ||
+			of_machine_is_compatible("fsl,imx6q-mf0300") ||
 			of_machine_is_compatible("fsl,imx6q-sabreauto") ||
 			of_machine_is_compatible("fsl,imx6qp-sabresd") ||
 			of_machine_is_compatible("fsl,imx6qp-sabreauto"))
@@ -373,16 +374,18 @@ static void __init imx6q_opp_check_speed_grading(struct device *cpu_dev)
 	val >>= OCOTP_CFG3_SPEED_SHIFT;
 	val &= 0x3;
 
-	if ((val != OCOTP_CFG3_SPEED_1P2GHZ) && cpu_is_imx6q())
-		if (dev_pm_opp_disable(cpu_dev, 1200000000))
-			pr_warn("failed to disable 1.2 GHz OPP\n");
-	if (val < OCOTP_CFG3_SPEED_996MHZ)
-		if (dev_pm_opp_disable(cpu_dev, 996000000))
-			pr_warn("failed to disable 996 MHz OPP\n");
-	if (cpu_is_imx6q()) {
-		if (val != OCOTP_CFG3_SPEED_852MHZ)
-			if (dev_pm_opp_disable(cpu_dev, 852000000))
-				pr_warn("failed to disable 852 MHz OPP\n");
+	if (IS_ENABLED(CONFIG_SOC_IMX6Q_LIMIT_MAX_FREQ)) {
+		if ((val != OCOTP_CFG3_SPEED_1P2GHZ) && cpu_is_imx6q())
+			if (dev_pm_opp_disable(cpu_dev, 1200000000))
+				pr_warn("failed to disable 1.2 GHz OPP\n");
+		if (val < OCOTP_CFG3_SPEED_996MHZ)
+			if (dev_pm_opp_disable(cpu_dev, 996000000))
+				pr_warn("failed to disable 996 MHz OPP\n");
+		if (cpu_is_imx6q()) {
+			if (val != OCOTP_CFG3_SPEED_852MHZ)
+				if (dev_pm_opp_disable(cpu_dev, 852000000))
+					pr_warn("failed to disable 852 MHz OPP\n");
+		}
 	}
 	iounmap(base);
 

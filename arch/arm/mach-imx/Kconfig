@@ -686,6 +686,13 @@ config FIC_PWR_MANAGER
 	help
 	  Say Y to get the fixed regulator for suspend support
 
+config SOC_IMX6Q_LIMIT_MAX_FREQ
+	bool "i.MX6 limit max frequency by ocotp CFG3 register"
+	depends on SOC_IMX6Q
+	default y
+	help
+	  Say N to enable overclocking feature for Freescale i.MX6 Quad processor
+
 source "arch/arm/mach-imx/devices/Kconfig"
 
 endif
