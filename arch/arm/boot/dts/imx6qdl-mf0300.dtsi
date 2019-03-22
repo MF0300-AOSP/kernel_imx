@@ -90,8 +90,8 @@
 
 		update-led {
 			label = "UPDATE_LED";
-			gpios = <&gpio1 6 GPIO_ACTIVE_HIGH>;
-			default-state = "on";
+			gpios = <&gpio1 6 GPIO_ACTIVE_LOW>;
+			default-state = "off";
 			retain-state-suspended;
 		};
 	};
