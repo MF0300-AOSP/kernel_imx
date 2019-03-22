@@ -57,13 +57,11 @@
 		sp213-en {
 			label = "SP213_PWR_EN";
 			gpios = <&gpio4 5 GPIO_ACTIVE_HIGH>;
-			linux,default-trigger = "sp213-en";
 		};
 
 		cash-drawer-gpio1 {
 			label = "CASH_DRAWER_GPIO1";
 			gpios = <&gpio4 26 GPIO_ACTIVE_HIGH>;
-			linux,default-trigger = "cash-drawer-gpio1";
 			default-state = "on";
 			retain-state-suspended;
 		};
@@ -71,7 +69,6 @@
 		cash-drawer-gpio2 {
 			label = "CASH_DRAWER_GPIO2";
 			gpios = <&gpio4 25 GPIO_ACTIVE_HIGH>;
-			linux,default-trigger = "cash-drawer-gpio2";
 			default-state = "on";
 			retain-state-suspended;
 		};
@@ -79,7 +76,6 @@
 		stadnby-led {
 			label = "STANDBY_LED";
 			gpios = <&gpio4 14 GPIO_ACTIVE_HIGH>;
-			linux,default-trigger = "standby-led";
 			default-state = "on";
 			retain-state-suspended;
 		};
@@ -87,7 +83,6 @@
 		power-led {
 			label = "POWER_LED";
 			gpios = <&gpio4 15 GPIO_ACTIVE_HIGH>;
-			linux,default-trigger = "power-led";
 			default-state = "on";
 			retain-state-suspended;
 		};
@@ -95,7 +90,6 @@
 		update-led {
 			label = "UPDATE_LED";
 			gpios = <&gpio1 6 GPIO_ACTIVE_HIGH>;
-			linux,default-trigger = "update-led";
 			default-state = "on";
 			retain-state-suspended;
 		};
