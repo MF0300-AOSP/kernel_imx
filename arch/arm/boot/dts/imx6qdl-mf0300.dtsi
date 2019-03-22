@@ -57,6 +57,7 @@
 		sp213-en {
 			label = "SP213_PWR_EN";
 			gpios = <&gpio4 5 GPIO_ACTIVE_HIGH>;
+			default-state = "on";
 		};
 
 		cash-drawer-gpio1 {
