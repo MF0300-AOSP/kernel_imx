@@ -54,11 +54,6 @@
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_gpio_leds>;
 
-		user {
-			label = "debug";
-			gpios = <&gpio5 15 GPIO_ACTIVE_HIGH>;
-		};
-
 		sp213-en {
 			label = "SP213_PWR_EN";
 			gpios = <&gpio4 5 GPIO_ACTIVE_HIGH>;
