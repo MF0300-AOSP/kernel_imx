@@ -233,6 +233,16 @@
 			enable-active-high;
 			regulator-boot-on;
 		};
+
+		reg_wlreg_on: wlreg_on {
+			compatible = "regulator-fixed";
+			regulator-name = "wlreg_on";
+			regulator-min-microvolt = <1800000>;
+			regulator-max-microvolt = <1800000>;
+			gpio = <&gpio3 18 GPIO_ACTIVE_HIGH>;
+			startup-delay-us = <100>;
+			enable-active-high;
+		};
 	};
 
 	sound-hdmi {
