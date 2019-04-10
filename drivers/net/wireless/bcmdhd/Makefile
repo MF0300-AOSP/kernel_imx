@@ -92,9 +92,7 @@ DHDCFLAGS += -DWL_VIRTUAL_APSTA
 # platform type
 # imx: NXP iMX platform
 ##########################
-ifneq ($(CONFIG_BCM433x), y)
-  DHDPLATFORM ?= imx
-endif
+DHDPLATFORM ?= imx
 ifeq ($(DHDPLATFORM), imx)
   DHDCFLAGS += -DCONFIG_DTS -DCUSTOMER_IMX
 else
