@@ -15,12 +15,6 @@ config BCMDHD_PCIE
 	bool "PCIe bus interface support"
 	depends on BCMDHD && PCI && !BCMDHD_SDIO
 
-config BCM433x
-	depends on BCMDHD
-	bool "BCM433x platform device support"
-	---help---
-	  Broadcom BCM433x platform device register.
-
 config BCM4339
 	tristate "BCM4339 support"
 	depends on BCMDHD
