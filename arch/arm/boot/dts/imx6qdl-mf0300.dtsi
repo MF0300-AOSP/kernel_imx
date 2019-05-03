@@ -849,3 +849,12 @@
 				0x0000c000 0x1404a38e 0x00000000>;
 	};
 };
+
+&clks {
+	assigned-clocks =
+			<&clks IMX6QDL_CLK_LDB_DI0_SEL>,
+			<&clks IMX6QDL_CLK_LDB_DI1_SEL>;
+	assigned-clock-parents =
+			<&clks IMX6QDL_CLK_PLL5_VIDEO_DIV>,
+			<&clks IMX6QDL_CLK_PLL5_VIDEO_DIV>;
+};
