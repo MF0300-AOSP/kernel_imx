@@ -1,0 +1,4 @@
+How to convert common BMP image to be used as Linux kernel logo:
+
+ppmquant 224 shift4-logo.ppm > logo_224.ppm
+pnmnoraw logo_224.ppm > logo_linux_clut224.ppm
